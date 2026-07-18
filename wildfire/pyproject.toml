@@ -1,0 +1,20 @@
+[project]
+name = "ember-wildfire"
+version = "0.1.0"
+description = "Turn a fleeting thought into a spark worth keeping, and let it spread."
+readme = "README.md"
+authors = [
+    { name = "timothydhoe", email = "timothy.dhoe@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+wildfire = "wildfire:main"
+
+[build-system]
+requires = ["uv_build>=0.11.28,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "wildfire"
