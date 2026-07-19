@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 import re
 
+_CONTEXT = re.compile(r"@([\w-]+)")
 _WIKILINK = re.compile(r"\[\[([^\]]+)\]\]")
 
 
@@ -13,8 +14,12 @@ class Entry:
     time: str
     text: str
     date: date
-    # context: str /regex needed
-    # link: str /regex needed
+    contexts: list[str] = field(default_factory=list)
+    links: list[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.contexts = _CONTEXT.findall(self.text)
+        self.links = _WIKILINK.findall(self.text)
 
 
 @dataclass
@@ -40,9 +45,6 @@ class Note:
         else:
             links = []
         return cls(name=name, path=path, links=links)
-        # if path.exists: read file, find every [[...]] match
-        # else: links = []
-        # return cls(name=..., path=path, links=...))
 
     def read(self) -> str:
         if self.exists:
