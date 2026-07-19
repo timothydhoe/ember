@@ -12,4 +12,4 @@ Everything's plain markdown, readable with or without *wildfire* installed.
 
 ---
 
-**status**: early daym not installable yet. See [ARCHITECTURE.md](./ARCHITECTURE.md) for my actual reasoning and suffering behind it.
+**status**: early days not installable yet. See [ARCHITECTURE.md](./ARCHITECTURE.md) for my actual reasoning and suffering behind it.
