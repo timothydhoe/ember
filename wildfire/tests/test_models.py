@@ -1,6 +1,40 @@
 from datetime import date
 from pathlib import Path
-from wildfire.models import Entry, Note
+from wildfire.models import DailyLog, Entry, Note
+
+# ---
+# DailyLog test
+
+
+def test_daily_log_loads_entries(tmp_path):
+    log_path = tmp_path / "2026-07-20.md"
+    log_path.write_text(
+        "# Monday, 20th July\n"
+        "- 08:32 fix the serif on \\n and \\h @type-design\n"
+        "- 09:01 study Ascendonica punches from [[Van den Keere]].\n"
+    )
+    log = DailyLog.from_path(log_path)
+
+    assert log.date == date(2026, 7, 20)
+    assert len(log.entries) == 2
+    assert log.entries[0].contexts == ["type-design"]
+    assert log.entries[1].links == ["Van den Keere"]
+
+
+def test_daily_log_skips_blank_lines(tmp_path):
+    log_path = tmp_path / "2026-07-20.md"
+    log_path.write_text("- 08:32 first wisp\n\n- 09:01 second wisp\n")
+    log = DailyLog.from_path(log_path)
+
+    assert len(log.entries) == 2
+
+
+def test_daily_log_empty_file_has_no_entries(tmp_path):
+    log_path = tmp_path / "2026-07-20.md"
+    log_path.write_text("")
+    log = DailyLog.from_path(log_path)
+
+    assert log.entries == []
 
 
 # ---

@@ -7,6 +7,25 @@ import re
 
 _CONTEXT = re.compile(r"@([\w-]+)")
 _WIKILINK = re.compile(r"\[\[([^\]]+)\]\]")
+_ENTRY_LINE = re.compile(r"^- (\d{2}:\d{2}) (.+)$")
+
+
+@dataclass
+class DailyLog:
+    date: date
+    path: Path
+    entries: list[Entry]
+
+    @classmethod
+    def from_path(cls, path) -> DailyLog:
+        entries = []
+        log_date = date.fromisoformat(path.stem)
+        for line in path.read_text(encoding="utf-8").splitlines():
+            entry = Entry.parse(line, log_date)
+            if entry is not None:
+                entries.append(entry)
+
+        return cls(date=log_date, path=path, entries=entries)
 
 
 @dataclass
@@ -20,6 +39,13 @@ class Entry:
     def __post_init__(self):
         self.contexts = _CONTEXT.findall(self.text)
         self.links = _WIKILINK.findall(self.text)
+
+    @classmethod
+    def parse(cls, line: str, log_date: date) -> Entry | None:
+        match = _ENTRY_LINE.match(line)
+        if not match:
+            return None
+        return cls(time=match.group(1), text=match.group(2), date=log_date)
 
 
 @dataclass
