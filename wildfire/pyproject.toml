@@ -7,7 +7,9 @@ authors = [
     { name = "timothydhoe", email = "timothy.dhoe@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "tomlkit>=0.15.1",
+]
 
 [project.scripts]
 wildfire = "wildfire:main"
