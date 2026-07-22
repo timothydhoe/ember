@@ -6,11 +6,18 @@ The only point of access for ~/Wildfire/
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 
 from wildfire.config import Config
 from wildfire.models import DailyLog, Entry, Note, slugify
+
+
+@dataclass
+class Backlinks:
+    entries: list[Entry] = field(default_factory=list)
+    notes: list[Note] = field(default_factory=list)
 
 
 class Corpus:
@@ -31,6 +38,20 @@ class Corpus:
             return DailyLog(date=log_date, path=path, entries=[])
         return DailyLog.from_path(path)
 
+    def backlinks(self, name: str) -> Backlinks:
+        target = slugify(name)
+        matching_entries = [
+            entry
+            for entry in self.all_entries()
+            if any(slugify(link) == target for link in entry.links)
+        ]
+        matching_notes = [
+            note
+            for note in self.list_notes()
+            if any(slugify(link) == target for link in note.links)
+        ]
+        return Backlinks(entries=matching_entries, notes=matching_notes)
+
     # ~~~ Entries/wisps ~~~
     def append_entry(self, text: str, log_date: date | None = None) -> Entry:
         log_date = log_date or date.today()
@@ -46,6 +67,13 @@ class Corpus:
 
         entry = Entry(time=now, text=text, date=log_date)
         return entry
+
+    def all_entries(self) -> list[Entry]:
+        entries = []
+        for path in sorted(self.config.entries_dir.glob("????-??-??.md")):
+            log = DailyLog.from_path(path)
+            entries.extend(log.entries)
+        return entries
 
     # ~~~ Notes/sparks ~~~
     def note_path(self, name: str) -> Path:

@@ -37,3 +37,37 @@ def test_note_links_reflect_real_content(corpus):
     note = corpus.create_note("fonts")
     note.write("relates to [[type design]]")
     assert corpus.get_note("fonts").links == ["type design"]
+
+
+# ~~ Backlink tests ~~
+
+
+def test_backlinks_finds_matching_entry(corpus):
+    corpus.append_entry("Dreaming about [[fonts]] again.")
+    result = corpus.backlinks("fonts")
+    assert len(result.entries) == 1
+    assert result.notes == []
+
+
+def test_backlinks_finds_matching_note(corpus):
+    corpus.create_note("fonts")
+    note = corpus.create_note("type design")
+    note.write("relates to [[fonts]]")
+    result = corpus.backlinks("fonts")
+    assert len(result.notes) == 1
+    assert result.notes[0].name == "type-design"
+    assert result.notes[0].title == "type design"
+
+
+def test_backlinks_to_nonexistent_target_returns_empty(corpus):
+    result = corpus.backlinks("Sadly, nothing links here...")
+    assert result.entries == []
+    assert result.notes == []
+
+
+def test_backlinks_ordering_is_oldest_first(corpus):
+    corpus.append_entry("First mention of the word [[fonts]]")
+    corpus.append_entry("Second mention of the word [[fonts]]")
+    result = corpus.backlinks("fonts")
+    assert result.entries[0].text == "First mention of the word [[fonts]]"
+    assert result.entries[1].text == "Second mention of the word [[fonts]]"
