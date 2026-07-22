@@ -23,11 +23,11 @@ class Config:
     editor: str = ""
 
     @property
-    def wisps_dir(self) -> Path:
+    def entries_dir(self) -> Path:
         return self.wildfire_dir / "wisps"
 
     @property
-    def sparks_dir(self) -> Path:
+    def notes_dir(self) -> Path:
         return self.wildfire_dir / "sparks"
 
     @classmethod
@@ -72,5 +72,5 @@ class Config:
         )
 
     def ensure_dirs(self) -> None:
-        self.wisps_dir.mkdir(parents=True, exist_ok=True)
-        self.sparks_dir.mkdir(parents=True, exist_ok=True)
+        self.entries_dir.mkdir(parents=True, exist_ok=True)
+        self.notes_dir.mkdir(parents=True, exist_ok=True)

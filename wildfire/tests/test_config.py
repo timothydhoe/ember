@@ -5,8 +5,8 @@ from wildfire.config import Config
 def test_config_defaults():
     cfg = Config()
     assert cfg.wildfire_dir == Path("~/Wildfire").expanduser()
-    assert cfg.wisps_dir == Path("~/Wildfire/wisps").expanduser()
-    assert cfg.sparks_dir == Path("~/Wildfire/sparks").expanduser()
+    assert cfg.entries_dir == Path("~/Wildfire/wisps").expanduser()
+    assert cfg.notes_dir == Path("~/Wildfire/sparks").expanduser()
 
 
 def test_resolve_editor_falls_back_to_vim(monkeypatch):
