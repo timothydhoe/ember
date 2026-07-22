@@ -1,0 +1,65 @@
+"""
+wildfire.corpus
+~~~~~~~~~~~~~~~
+The only point of access for ~/Wildfire/
+"""
+
+from __future__ import annotations
+
+from datetime import date, datetime
+from pathlib import Path
+
+from wildfire.config import Config
+from wildfire.models import DailyLog, Entry, Note, slugify
+
+
+class Corpus:
+    def __init__(self, config: Config) -> None:
+        self.config = config
+        self.config.ensure_dirs()
+
+    def daily_path(self, log_date: date | None = None) -> Path:
+        log_date = log_date or date.today()
+        return self.config.entries_dir / f"{log_date.isoformat()}.md"
+
+    def today(self) -> DailyLog:
+        return self.load_daily(date.today())
+
+    def load_daily(self, log_date: date) -> DailyLog:
+        path = self.daily_path(log_date)
+        if not path.exists():
+            return DailyLog(date=log_date, path=path, entries=[])
+        return DailyLog.from_path(path)
+
+    # ~~~ Entries/wisps ~~~
+    def append_entry(self, text: str, log_date: date | None = None) -> Entry:
+        log_date = log_date or date.today()
+        path = self.daily_path(log_date)
+        now = datetime.now().strftime("%H:%M")
+        if not text.strip():
+            raise ValueError("wisp text cannot be empty")
+        line = f"- {now} {text}"
+
+        with open(path, "a", encoding="utf-8") as f:
+            # write line + add newline
+            f.write(line + "\n")
+
+        entry = Entry(time=now, text=text, date=log_date)
+        return entry
+
+    # ~~~ Notes/sparks ~~~
+    def note_path(self, name: str) -> Path:
+        return self.config.notes_dir / f"{slugify(name)}.md"
+
+    def get_note(self, name: str) -> Note:
+        return Note.from_path(self.note_path(name))
+
+    def create_note(self, title: str) -> Note:
+        path = self.note_path(title)
+        if not path.exists():
+            path.write_text(f"# {title}\n\n", encoding="utf-8")
+        return Note.from_path(path)
+
+    def list_notes(self) -> list[Note]:
+        paths = sorted(self.config.notes_dir.glob("*.md"))
+        return [Note.from_path(path) for path in paths]
