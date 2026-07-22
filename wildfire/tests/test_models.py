@@ -1,6 +1,6 @@
 from datetime import date
 from pathlib import Path
-from wildfire.models import DailyLog, Entry, Note
+from wildfire.models import DailyLog, Entry, Note, slugify
 
 # ---
 # DailyLog test
@@ -112,3 +112,16 @@ def test_write_refresh_links(tmp_path):
     spark = Note.from_path(real_file)
     spark.write("[[Nicolas Jenson]] created a legible Roman typeface in [[1470]].")
     assert spark.links == ["Nicolas Jenson", "1470"]
+
+
+# ---
+# slugify() tests
+
+def test_slugify_lowercase_and_hypenathes():
+    assert slugify("Type Design Notes") == "type-design-notes"
+
+def test_slugify_strips_punctuation():
+    assert slugify("Garamont's Punches!") == "garamonts-punches"
+
+def test_slugify_collapses_extra_whitespace():
+    assert slugify("  weird   spacing ") == "weird-spacing"

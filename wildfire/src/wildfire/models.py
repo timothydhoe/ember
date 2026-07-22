@@ -1,3 +1,10 @@
+"""
+wildfire.models
+~~~~~~~~~~~~~~~
+
+Entry (a wisp), Note(a spark), DailyLog (a day's wisps) and slugify().
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -8,6 +15,7 @@ import re
 _CONTEXT = re.compile(r"@([\w-]+)")
 _WIKILINK = re.compile(r"\[\[([^\]]+)\]\]")
 _ENTRY_LINE = re.compile(r"^- (\d{2}:\d{2}) (.+)$")
+_SLUG_UNSAFE = re.compile(r"[^\w\-]+")
 
 
 @dataclass
@@ -80,3 +88,9 @@ class Note:
     def write(self, content: str) -> None:
         self.path.write_text(content, encoding="utf-8")
         self.links = _WIKILINK.findall(content)
+
+
+def slugify(text: str) -> str:
+    text = text.strip().lower()
+    text = re.sub(r"\s+", "-", text)
+    return _SLUG_UNSAFE.sub("", text)
