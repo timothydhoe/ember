@@ -12,10 +12,14 @@ from datetime import date
 from pathlib import Path
 import re
 
+_APOSTROPHE_SUFFIX = re.compile(r"'\w+")
 _CONTEXT = re.compile(r"@([\w-]+)")
-_WIKILINK = re.compile(r"\[\[([^\]]+)\]\]")
 _ENTRY_LINE = re.compile(r"^- (\d{2}:\d{2}) (.+)$")
 _SLUG_UNSAFE = re.compile(r"[^\w\-]+")
+_TOKEN = re.compile(r"[\w]+")
+_WIKILINK = re.compile(r"\[\[([^\]]+)\]\]")
+
+STOPWORDS = {"a", "an", "the", "about", "again", "and", "or", "is", "of", "to"}
 
 
 @dataclass
@@ -89,8 +93,19 @@ class Note:
         self.path.write_text(content, encoding="utf-8")
         self.links = _WIKILINK.findall(content)
 
+    def append(self, content: str) -> None:
+        existing = self.read()
+        combined = f"{existing}\n{content}" if existing else content
+        self.write(combined)
+
 
 def slugify(text: str) -> str:
     text = text.strip().lower()
     text = re.sub(r"\s+", "-", text)
     return _SLUG_UNSAFE.sub("", text)
+
+
+def tokenize(text: str) -> set[str]:
+    text = _APOSTROPHE_SUFFIX.sub("", text.lower())
+    words = _TOKEN.findall(text)
+    return set(words) - STOPWORDS

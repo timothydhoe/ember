@@ -1,6 +1,6 @@
 from datetime import date
 from pathlib import Path
-from wildfire.models import DailyLog, Entry, Note, slugify
+from wildfire.models import DailyLog, Entry, Note, slugify, tokenize
 
 # ---
 # DailyLog test
@@ -114,14 +114,52 @@ def test_write_refresh_links(tmp_path):
     assert spark.links == ["Nicolas Jenson", "1470"]
 
 
+def test_note_append_adds_to_existing_content(tmp_path):
+    note = Note.from_path(tmp_path / "fonts.md")
+    note.write("First paragraph!")
+    note.append("A second paragraph.")
+    assert note.read() == "First paragraph!\nA second paragraph."
+
+
+def test_note_append_refreshes_links(tmp_path):
+    note = Note.from_path(tmp_path / "fonts.md")
+    note.write("No links yet")
+    note.append("Now mentions [[type design]]")
+    assert note.links == ["type design"]
+
+
 # ---
 # slugify() tests
+
 
 def test_slugify_lowercase_and_hypenathes():
     assert slugify("Type Design Notes") == "type-design-notes"
 
+
 def test_slugify_strips_punctuation():
     assert slugify("Garamont's Punches!") == "garamonts-punches"
 
+
 def test_slugify_collapses_extra_whitespace():
     assert slugify("  weird   spacing ") == "weird-spacing"
+
+
+# ---
+# tokenize() tests
+
+
+def test_tokenize_strips_stopwords():
+    assert tokenize("thinking about Garamond punches again") == {
+        "thinking",
+        "garamond",
+        "punches",
+    }
+
+
+def test_tokenize_strips_possessive_suffix():
+    assert tokenize("Garamond's punches") == tokenize("Garamond punches")
+
+
+def test_tokenize_is_case_insensitive():
+    assert tokenize("UPPERCASE letters") == {"uppercase", "letters"}
+
