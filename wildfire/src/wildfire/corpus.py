@@ -20,6 +20,12 @@ class Backlinks:
     notes: list[Note] = field(default_factory=list)
 
 
+@dataclass
+class SearchResults:
+    entries: list[Entry] = field(default_factory=list)
+    notes: list[Note] = field(default_factory=list)
+
+
 class Corpus:
     def __init__(self, config: Config) -> None:
         self.config = config
@@ -91,3 +97,14 @@ class Corpus:
     def list_notes(self) -> list[Note]:
         paths = sorted(self.config.notes_dir.glob("*.md"))
         return [Note.from_path(path) for path in paths]
+
+    def search(self, query: str) -> SearchResults:
+        query = query.lower()
+        matching_entries = [
+            entry for entry in self.all_entries() if query in entry.text.lower()
+        ]
+        matching_notes = [
+            note for note in self.list_notes() if query in note.read().lower()
+        ]
+
+        return SearchResults(entries=matching_entries, notes=matching_notes)

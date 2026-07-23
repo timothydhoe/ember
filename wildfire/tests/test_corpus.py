@@ -71,3 +71,34 @@ def test_backlinks_ordering_is_oldest_first(corpus):
     result = corpus.backlinks("fonts")
     assert result.entries[0].text == "First mention of the word [[fonts]]"
     assert result.entries[1].text == "Second mention of the word [[fonts]]"
+
+
+# ~~ Search tests ~~
+
+
+def test_search_finds_matching_entry(corpus):
+    corpus.append_entry("Thinking about lowercase letters again...")
+    result = corpus.search("lowercase letters")
+    assert len(result.entries) == 1
+    assert result.notes == []
+
+
+def test_search_is_case_insensitive(corpus):
+    corpus.append_entry("Drawing uppercase letters again...")
+    result = corpus.search("UPPERCASE")
+    assert len(result.entries) == 1
+
+
+def test_search_finds_matching_note_content(corpus):
+    corpus.create_note("fonts")
+    spark = corpus.get_note("fonts")
+    spark.write("Garamond's punches can be studied at the Plantin-Moretus Museum")
+    result = corpus.search("garamond")
+    assert len(result.notes) == 1
+    assert result.notes[0].name == "fonts"
+
+
+def test_search_no_match_returns_empty(corpus):
+    result = corpus.search("Nothing will match this!")
+    assert result.entries == []
+    assert result.notes == []
