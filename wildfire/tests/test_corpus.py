@@ -102,3 +102,44 @@ def test_search_no_match_returns_empty(corpus):
     result = corpus.search("Nothing will match this!")
     assert result.entries == []
     assert result.notes == []
+
+
+# ~~ catch() tests ~~
+
+
+def test_catch_creates_note_with_entry_test(corpus):
+    entry = corpus.append_entry("Thinking about Garamond's punches")
+    result = corpus.catch(entry, "Garamond Notes")
+    assert "Thinking about Garamond's punches" in result.note.read()
+
+
+def test_catch_appends_on_repeat_catch(corpus):
+    entry1 = corpus.append_entry("First thought on serifs")
+    entry2 = corpus.append_entry("Second thoughts on serifs")
+    corpus.catch(entry1, "Serif Notes")
+    result = corpus.catch(entry2, "Serif Notes")
+    assert "First thought" in result.note.read()
+    assert "Second thoughts" in result.note.read()
+
+
+def test_catch_suggests_matching_notes(corpus):
+    corpus.create_note("Nicolas Jenson's History")
+    entry = corpus.append_entry(
+        "Dreaming about the history of reinventing the letter /h"
+    )
+    result = corpus.catch(entry, "Type Design History")
+    assert len(result.suggestions) == 1
+    assert result.suggestions[0].note.title == "nicolas jensons history"
+
+
+def test_catch_excludes_newly_created_note_from_its_own_suggestions(corpus):
+    entry = corpus.append_entry("Thinking about a classic old style serif")
+    result = corpus.catch(entry, "Type Design Notes")
+    titles = [s.note.title for s in result.suggestions]
+    assert "Type Design Notes" not in titles
+
+
+def test_catch_no_suggestions_when_nothing_overlaps(corpus):
+    entry = corpus.append_entry("A thought completely unrelated to type design")
+    result = corpus.catch(entry, "Fancy title")
+    assert result.suggestions == []

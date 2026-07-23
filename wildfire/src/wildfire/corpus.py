@@ -11,13 +11,25 @@ from datetime import date, datetime
 from pathlib import Path
 
 from wildfire.config import Config
-from wildfire.models import DailyLog, Entry, Note, slugify
+from wildfire.models import DailyLog, Entry, Note, slugify, tokenize
 
 
 @dataclass
 class Backlinks:
     entries: list[Entry] = field(default_factory=list)
     notes: list[Note] = field(default_factory=list)
+
+
+@dataclass
+class CatchResult:
+    note: Note
+    suggestions: list[LinkSuggestion] = field(default_factory=list)
+
+
+@dataclass
+class LinkSuggestion:
+    note: Note
+    score: int
 
 
 @dataclass
@@ -108,3 +120,25 @@ class Corpus:
         ]
 
         return SearchResults(entries=matching_entries, notes=matching_notes)
+
+    # ~~ Catch ~~
+    def _suggest_links(
+        self, entry: Entry, exclude: Note | None = None
+    ) -> list[LinkSuggestion]:
+        entry_tokens = tokenize(entry.text)
+        suggestions = []
+        for note in self.list_notes():
+            if exclude is not None and note.path == exclude.path:
+                continue
+            note_tokens = tokenize(note.title)
+            score = len(entry_tokens & note_tokens)
+            if score >= 1:
+                suggestions.append(LinkSuggestion(note=note, score=score))
+        suggestions.sort(key=lambda s: s.score, reverse=True)
+        return suggestions
+
+    def catch(self, entry: Entry, title: str) -> CatchResult:
+        note = self.create_note(title)
+        note.append(entry.text)
+        suggestions = self._suggest_links(entry, exclude=note)
+        return CatchResult(note=note, suggestions=suggestions)
