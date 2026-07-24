@@ -143,3 +143,10 @@ def test_catch_no_suggestions_when_nothing_overlaps(corpus):
     entry = corpus.append_entry("A thought completely unrelated to type design")
     result = corpus.catch(entry, "Fancy title")
     assert result.suggestions == []
+
+
+def test_catch_does_not_duplicate_same_wisp_text(corpus):
+    entry = corpus.append_entry("Reading up on Database Internals")
+    corpus.catch(entry, "Database Notes")
+    result = corpus.catch(entry, "Database Notes")
+    assert result.note.read().count("Reading up on Database Internals") == 1

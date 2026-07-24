@@ -139,6 +139,7 @@ class Corpus:
 
     def catch(self, entry: Entry, title: str) -> CatchResult:
         note = self.create_note(title)
-        note.append(entry.text)
+        if entry.text not in note.read():
+            note.append(entry.text)
         suggestions = self._suggest_links(entry, exclude=note)
         return CatchResult(note=note, suggestions=suggestions)
