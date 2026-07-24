@@ -3,11 +3,14 @@ wildfire.cli
 ~~~~~~~~~~~~
 Entry point for the `wildfire` command.
 
-    wildfire your thought right here    -> quick-add
-    wildfire --note "Title"             -> create a spark (Note)
-    wildfire --search <query>           -> substring search
-    wildfire --backlinks <name>         -> what links here
-    wildfire                            -> ??? (future TUI?)
+    wildfire your thought right here        -> quick-add
+    wildfire -                              -> quick-add from stdin
+    wildfire --note "Title"                 -> create a spark (Note)
+    wildfire --search <query>               -> substring search
+    wildfire --backlinks <name>             -> show what links to <name>
+    wildfire --catch-latest "Title"         -> catch the most recent wisp
+    wildfire --catch <query> --as "Title"   -> catch a matched wisp
+    wildfire                                -> ??? (future TUI?)
 """
 
 from __future__ import annotations

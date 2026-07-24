@@ -2,7 +2,8 @@
 wildfire.models
 ~~~~~~~~~~~~~~~
 
-Entry (a wisp), Note(a spark), DailyLog (a day's wisps) and slugify().
+Entry (a wisp), Note(a spark), DailyLog (a day's wisps),
+plus string-transform helpers: slugify() and tokenize().
 """
 
 from __future__ import annotations

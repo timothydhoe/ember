@@ -1,7 +1,9 @@
 """
 wildfire.corpus
 ~~~~~~~~~~~~~~~
-The only point of access for ~/Wildfire/
+The point of access for ~/Wildfire/
+
+Also defines the result types: Backlinks, SearchResults, CatchResults, and Linksuggestions
 """
 
 from __future__ import annotations

@@ -1,7 +1,7 @@
 """
 wildfire.config
 ~~~~~~~~~~~~~~~
-Read and writes ~/.ember-hearth/wildfire/config.toml
+Reads and writes ~/.ember-hearth/wildfire/config.toml
 """
 
 from __future__ import annotations
