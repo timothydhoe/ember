@@ -33,16 +33,13 @@ Plain markdown files. For now: No enforced structure beyond the filename itself.
 
 ## Tags - `@word`
 
-- Matches `@` followed by letters, digits, `-`, or `_`. Stops at whitespace.
-- Single token only: `@type-designer` works, `@type designer` does not.
-- Wisps only. Sparks don't currently carry `@tags` but will do in the future.
+- Wisps only. Sparks don't currently carry `@tags`.
 
 ## Links - [[phrase]]
 
 - Matches everything between `[[` and the next `]]`.
 - In contrast with `@tags`, links can contain spaces. Example: `[[This is a valid link.]]`
-- No nesting: `[[this is [[NOT]] valid.]]` but might be implemented in the future.
-- Fuzzy search will be introduced later.
+- No nesting: `[[this is [[NOT]] valid.]]`
 - Valid in both *wisps* and *sparks*.
 
 
