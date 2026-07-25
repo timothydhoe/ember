@@ -104,6 +104,14 @@ def run(args: list[str], corpus: Corpus) -> str:
             return "Query is missing. Cannot find emptiness."
         results = corpus.search(query)
         return _format_matches(results.entries, results.notes, "No matches.")
+    elif first == "--show":
+        name = " ".join(rest)
+        if not name.strip():
+            return "Try: --show <name>"
+        note = corpus.get_note(name)
+        if not note.exists:
+            return f"No spark called '{name}' yet. --open will create it."
+        return note.read()
 
     # not a recognised flag -> quick-add
     text = " ".join(args)

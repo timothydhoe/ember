@@ -107,3 +107,24 @@ def test_run_catch_missing_as_returns_usage_message(corpus):
 def test_run_catch_no_matches(corpus):
     result = run(["--catch", "nonexistent", "--as", "Fancy title"], corpus)
     assert "no wisp found" in result.lower()
+
+
+# ~~ --show tests ~~
+
+
+def test_run_show_on_ghost_name(corpus):
+    result = run(["--show", "nonexistent spark"], corpus)
+    assert "nonexistent spark" in result.lower()
+    assert "--open" in result
+
+
+def test_run_show_prints_note_content(corpus):
+    corpus.create_note("Real Spark")
+    result = run(["--show", "Real Spark"], corpus)
+    assert "Real Spark" in result
+
+
+def test_run_show_with_no_name_returns_usage(corpus):
+    result = run(["--show"], corpus)
+    assert "Try:" in result
+    assert "--show" in result
