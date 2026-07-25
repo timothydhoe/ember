@@ -128,3 +128,25 @@ def test_run_show_with_no_name_returns_usage(corpus):
     result = run(["--show"], corpus)
     assert "Try:" in result
     assert "--show" in result
+
+
+# ~~ --open tests ~~
+
+
+def test_run_open_creates_and_repoerts_closed(monkeypatch, corpus):
+    def fake_run(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    result = run(["--open", "Freshly Sparked"], corpus)
+    assert corpus.get_note("Freshly Sparked").exists
+    assert "Closed: freshly-sparked" in result
+
+
+def test_run_open_missing_editor_binary(monkeypatch, corpus):
+    def fake_run(*args, **kwargs):
+        raise FileNotFoundError
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    result = run(["--open", "Some Spark"], corpus)
+    assert "Couldn't launch editor" in result

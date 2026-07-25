@@ -15,6 +15,8 @@ Entry point for the `wildfire` command.
 
 from __future__ import annotations
 
+import shlex
+import subprocess
 import sys
 
 from .config import Config
@@ -65,6 +67,7 @@ def run(args: list[str], corpus: Corpus) -> str:
         name = " ".join(rest)
         result = corpus.backlinks(name)
         return _format_matches(result.entries, result.notes, "No links here yet.")
+
     elif first == "--catch":
         if "--as" not in rest:
             return "Try: --catch <query> --as <title>"
@@ -79,6 +82,7 @@ def run(args: list[str], corpus: Corpus) -> str:
         entry = matches[-1]
         result = corpus.catch(entry, title)
         return _format_catch_result(result, entry, match_count=len(matches))
+
     elif first == "--catch-latest":
         title = " ".join(rest)
         if not title.strip():
@@ -89,6 +93,7 @@ def run(args: list[str], corpus: Corpus) -> str:
         last_entry = entries[-1]
         result = corpus.catch(last_entry, title)
         return _format_catch_result(result, last_entry)
+
     elif first == "--note":
         title = " ".join(rest)
         if not title.strip():
@@ -98,12 +103,26 @@ def run(args: list[str], corpus: Corpus) -> str:
         if existed:
             return f"Spark already exists: {note.name}"
         return f"Spark created: {note.name}"
+
+    elif first == "--open":
+        name = " ".join(rest)
+        if not name.strip():
+            return "Try: --open <name>"
+        note = corpus.create_note(name)
+        editor_cmd = corpus.config.resolve_editor()
+        try:
+            result = subprocess.run(shlex.split(editor_cmd) + [note.path])
+        except FileNotFoundError:
+            return f"Couldn't launch editor: '{editor_cmd}'. Set EDITOR, or 'editor' in config.toml."
+        return f"Closed: {note.name}"
+
     elif first == "--search":
         query = " ".join(rest)
         if not query:
             return "Query is missing. Cannot find emptiness."
         results = corpus.search(query)
         return _format_matches(results.entries, results.notes, "No matches.")
+
     elif first == "--show":
         name = " ".join(rest)
         if not name.strip():
