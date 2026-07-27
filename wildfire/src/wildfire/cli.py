@@ -24,6 +24,27 @@ from .corpus import CatchResult, Corpus
 from .models import Entry, Note
 
 
+def _format_lists(
+    entries: list[Entry] | None = None, notes: list[Note] | None = None
+) -> str:
+    lines = []
+    if entries is not None:
+        if entries:
+            lines.append("Wisps:")
+            for entry in entries:
+                lines.append(f" {entry.date.isoformat()} {entry.time} {entry.text}")
+        else:
+            lines.append("No wisps created yet.")
+    if notes is not None:
+        if notes:
+            lines.append("Sparks:")
+            for note in notes:
+                lines.append(f" {note.name}")
+        else:
+            lines.append("No sparks created yet.")
+    return "\n".join(lines)
+
+
 def _format_matches(entries: list[Entry], notes: list[Note], empty_message: str) -> str:
     if not entries and not notes:
         return empty_message
@@ -93,6 +114,13 @@ def run(args: list[str], corpus: Corpus) -> str:
         last_entry = entries[-1]
         result = corpus.catch(last_entry, title)
         return _format_catch_result(result, last_entry)
+
+    elif first == "--list":
+        return _format_lists(entries=corpus.all_entries(), notes=corpus.list_notes())
+    elif first == "--list-wisps":
+        return _format_lists(entries=corpus.all_entries())
+    elif first == "--list-sparks":
+        return _format_lists(notes=corpus.list_notes())
 
     elif first == "--note":
         title = " ".join(rest)

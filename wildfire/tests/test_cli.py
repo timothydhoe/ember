@@ -150,3 +150,36 @@ def test_run_open_missing_editor_binary(monkeypatch, corpus):
     monkeypatch.setattr("subprocess.run", fake_run)
     result = run(["--open", "Some Spark"], corpus)
     assert "Couldn't launch editor" in result
+
+
+# ~~ --list tests ~~
+
+
+def test_run_list_shows_both_sections(corpus):
+    corpus.append_entry("test wisp")
+    corpus.create_note("test spark")
+    result = run(["--list"], corpus)
+    assert "test wisp" in result
+    assert "test-spark" in result
+
+
+def test_run_list_wisps_only_excludes_sparks(corpus):
+    corpus.append_entry("test wisp")
+    corpus.create_note("Test spark")
+    result = run(["--list-wisps"], corpus)
+    assert "test wisp" in result
+    assert "sparks:" not in result.lower()
+
+
+def test_run_list_sparks_only_excludes_wisps(corpus):
+    corpus.append_entry("test wisp")
+    corpus.create_note("Test Spark")
+    result = run(["--list-sparks"], corpus)
+    assert "test-spark" in result
+    assert "wisps:" not in result.lower()
+
+
+def test_run_list_on_empty_corpus_shows_both_empty_messages(corpus):
+    result = run(["--list"], corpus)
+    assert "no wisps created yet" in result.lower()
+    assert "no sparks created yet" in result.lower()
