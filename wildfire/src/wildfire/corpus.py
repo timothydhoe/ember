@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from rapidfuzz import fuzz
 from pathlib import Path
 
 from wildfire.config import Config
@@ -145,3 +146,32 @@ class Corpus:
             note.append(entry.text)
         suggestions = self._suggest_links(entry, exclude=note)
         return CatchResult(note=note, suggestions=suggestions)
+
+    # ~~ Fuzzy Search ~~
+
+    def fuzzy_backlinks(self, name: str, threshold: float = 80) -> Backlinks:
+        target = slugify(name)
+
+        matching_entries = []
+        for entry in self.all_entries():
+            for link in entry.links:
+                link_slug = slugify(link)
+                if link_slug == target:
+                    continue
+                score = fuzz.ratio(link_slug, target, score_cutoff=threshold)
+                if score > 0:
+                    matching_entries.append(entry)
+                    break
+
+        matching_notes = []
+        for note in self.list_notes():
+            for link in note.links:
+                link_slug = slugify(link)
+                if link_slug == target:
+                    continue
+                score = fuzz.ratio(link_slug, target, score_cutoff=threshold)
+                if score > 0:
+                    matching_notes.append(note)
+                    break
+
+        return Backlinks(entries=matching_entries, notes=matching_notes)

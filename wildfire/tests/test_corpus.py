@@ -150,3 +150,27 @@ def test_catch_does_not_duplicate_same_wisp_text(corpus):
     corpus.catch(entry, "Database Notes")
     result = corpus.catch(entry, "Database Notes")
     assert result.note.read().count("Reading up on Database Internals") == 1
+
+# ~~ fuzzy backlinks tests ~~
+
+def test_fuzzy_backlinks_catches_typo(corpus):
+    corpus.append_entry("Thinking about [[baking waffels]] today")
+    result = corpus.fuzzy_backlinks("baking waffles")
+    assert len(result.entries) == 1
+
+def test_fuzzy_backlinks_excludes_exact_matches(corpus):
+    corpus.append_entry("Dreaming about [[fonts]] again")
+    result = corpus.fuzzy_backlinks("fonts")
+    assert result.entries == []
+
+def test_fuzzy_backlinks_catches_typo_in_note(corpus):
+    note = corpus.create_note("fonts")
+    note.write("relates to [[type deisgn]]")
+    result = corpus.fuzzy_backlinks("type design")
+    assert len(result.notes) == 1
+
+def test_fuzzy_backlinks_no_match_returns_empty(corpus):
+    corpus.append_entry("Thinking about [[baking waffels]] today")
+    result = corpus.fuzzy_backlinks("mushroom risotto")
+    assert result.entries == []
+    assert result.notes == []
