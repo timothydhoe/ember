@@ -85,7 +85,11 @@ def run(args: list[str], corpus: Corpus) -> str:
     first, *rest = args
 
     if first == "--backlinks":
-        name = " ".join(rest)
+        fuzzy = "--fuzzy" in rest
+        name = " ".join(word for word in rest if word != "--fuzzy")
+        if fuzzy:
+            result = corpus.fuzzy_backlinks(name)
+            return _format_matches(result.entries, result.notes, "No matches found.")
         result = corpus.backlinks(name)
         return _format_matches(result.entries, result.notes, "No links here yet.")
 

@@ -183,3 +183,16 @@ def test_run_list_on_empty_corpus_shows_both_empty_messages(corpus):
     result = run(["--list"], corpus)
     assert "no wisps created yet" in result.lower()
     assert "no sparks created yet" in result.lower()
+
+# ~~ test fuzzy_backlinks ~~
+
+def test_run_backlinks_fuzzy_catches_typo(corpus):
+    corpus.append_entry("Thinking about [[type deisgn]] today")
+    exact = run(["--backlinks", "type design"], corpus)
+    fuzzy = run(["--backlinks", "type design", "--fuzzy"], corpus)
+    assert "no links" in exact.lower()
+    assert "type deisgn" in fuzzy.lower()
+
+def test_run_backlinks_fuzzy_no_match(corpus):
+    result = run(["--backlinks", "nonexistent topic", "--fuzzy"], corpus)
+    assert "no matches found." in result.lower()
