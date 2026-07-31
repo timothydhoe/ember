@@ -119,6 +119,27 @@ def run(args: list[str], corpus: Corpus) -> str:
         result = corpus.catch(last_entry, title)
         return _format_catch_result(result, last_entry)
 
+    elif first == "--delete":
+        confirm = "--confirm" in rest
+        name = " ".join(word for word in rest if word != "--confirm")
+        if not name.strip():
+            return "Try: --delete <name>"
+        note = corpus.get_note(name)
+        if not note.exists:
+            return "Nothing there. Are you sure it exists?"
+        backlinks = corpus.backlinks(name)
+        if not backlinks.entries and not backlinks.notes:
+            warning = f"'{note.name}' has no backlinks."
+        else:
+            preview = _format_matches(
+                backlinks.entries, backlinks.notes, "Nothing links here yet"
+            )
+            warning = f"Deleting '{note.name}' will break these backlinks:\n{preview}"
+        if not confirm:
+            return f"{warning}\nRun again with --confirm to proceed."
+        note.delete()
+        return f"{note.name} has been deleted."
+
     elif first == "--list":
         return _format_lists(entries=corpus.all_entries(), notes=corpus.list_notes())
     elif first == "--list-wisps":

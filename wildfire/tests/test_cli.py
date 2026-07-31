@@ -109,6 +109,37 @@ def test_run_catch_no_matches(corpus):
     assert "no wisp found" in result.lower()
 
 
+# ~~ test --delete ~~
+
+
+def test_run_delete_shows_backlinks_without_confirm(corpus):
+    corpus.create_note("Old Spark")
+    corpus.append_entry("Remember to check [[Old Spark]] later")
+    result = run(["--delete", "Old Spark"], corpus)
+    assert "check" in result.lower()
+    assert "--confirm" in result
+    assert corpus.get_note("Old Spark").exists
+
+
+def test_run_delete_with_confirm_removes_spark(corpus):
+    corpus.create_note("Old Spark")
+    result = run(["--delete", "Old Spark", "--confirm"], corpus)
+    assert "deleted" in result.lower()
+    assert not corpus.get_note("Old Spark").exists
+
+
+def test_run_delete_on_ghost_name(corpus):
+    result = run(["--delete", "Nonexistent"], corpus)
+    assert "nothing there." in result.lower()
+
+
+def test_run_delete_with_no_backlinks(corpus):
+    corpus.create_note("Orphan Spark")
+    result = run(["--delete", "Orphan Spark"], corpus)
+    assert "no backlinks" in result.lower()
+    assert corpus.get_note("Orphan Spark").exists
+
+
 # ~~ --show tests ~~
 
 
@@ -184,7 +215,9 @@ def test_run_list_on_empty_corpus_shows_both_empty_messages(corpus):
     assert "no wisps created yet" in result.lower()
     assert "no sparks created yet" in result.lower()
 
+
 # ~~ test fuzzy_backlinks ~~
+
 
 def test_run_backlinks_fuzzy_catches_typo(corpus):
     corpus.append_entry("Thinking about [[type deisgn]] today")
@@ -192,6 +225,7 @@ def test_run_backlinks_fuzzy_catches_typo(corpus):
     fuzzy = run(["--backlinks", "type design", "--fuzzy"], corpus)
     assert "no links" in exact.lower()
     assert "type deisgn" in fuzzy.lower()
+
 
 def test_run_backlinks_fuzzy_no_match(corpus):
     result = run(["--backlinks", "nonexistent topic", "--fuzzy"], corpus)
