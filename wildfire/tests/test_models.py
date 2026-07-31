@@ -163,3 +163,20 @@ def test_tokenize_strips_possessive_suffix():
 def test_tokenize_is_case_insensitive():
     assert tokenize("UPPERCASE letters") == {"uppercase", "letters"}
 
+
+# ---
+# delete tests
+
+
+def test_delete_removes_file(tmp_path):
+    note = Note.from_path(tmp_path / "fonts.md")
+    note.write("some content")
+    assert note.exists
+    note.delete()
+    assert not note.exists
+
+
+def test_delete_is_idempotent(tmp_path):
+    note = Note.from_path(tmp_path / "ghost.md")
+    note.delete()
+    assert not note.exists

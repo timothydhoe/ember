@@ -99,6 +99,9 @@ class Note:
         combined = f"{existing}\n{content}" if existing else content
         self.write(combined)
 
+    def delete(self) -> None:
+        self.path.unlink(missing_ok=True)
+
 
 def slugify(text: str) -> str:
     text = text.strip().lower()
