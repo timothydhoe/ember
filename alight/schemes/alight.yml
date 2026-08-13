@@ -1,0 +1,78 @@
+# ember-fire — palette v0.5
+
+named: &named
+  # base tones
+  hearth:    &hearth    "#0B162D"
+  chalk:     &chalk     "#F4F2F1"
+  beacon:    &beacon    "#2350AE"
+
+  # the twelve
+  ash:       &ash       "#16273D"
+  coal:      &coal      "#050D16"
+  alight:    &alight    "#F8D860"
+  flare:     &flare     "#C8E0F8"
+  kindling:  &kindling  "#E0B898"
+  verdigris: &verdigris "#40E888"
+  flint:     &flint     "#604078"
+  spark:     &spark     "#F0F0F0"
+  smolder:   &smolder   "#889050"
+  pilot:     &pilot     "#3850A8"
+  dusk:      &dusk      "#9858E8"
+  ember:     &ember     "#982828"
+
+  # For legibility and flexibility
+  cinder:     &cinder     "#D75757"
+  bunsen:     &bunsen     "#667DCF"
+  amethyst:   &amethyst   "#9871B6"
+  phosphor:   &phosphor   "#3C9C98"
+  smoke:      &smoke      "#6F7A8C"
+  blaze:      &blaze      "#CE4444"
+  witchlight: &witchlight "#5AB5B1"
+
+palette:
+  name: ember
+  background: *hearth
+  foreground: *chalk
+  selection:  *beacon    
+  cursor:     *alight
+  bold:       *alight
+
+ansi:
+  black:          *coal
+  red:            *blaze
+  green:          *smolder
+  yellow:         *kindling
+  blue:           *bunsen
+  magenta:        *amethyst
+  cyan:           *phosphor
+  white:          *spark
+  bright_black:   *smoke
+  bright_red:     *cinder
+  bright_green:   *verdigris
+  bright_yellow:  *alight
+  bright_blue:    *flare
+  bright_magenta: *dusk
+  bright_cyan:    *witchlight
+  bright_white:   *chalk
+
+font:
+  family: JetBrains Mono
+  style: Regular
+  size: 16
+  line_spacing: 1.1
+
+window:
+  background_opacity: 0.95
+  background_blur: 0.40
+
+semantic:
+  error:    *cinder
+  warning:  *alight
+  success:  *verdigris
+  accent:   *alight
+  muted:    *smoke
+  link:     *bunsen
+  tag:      *dusk
+  keyword:  *amethyst  # was flint -- flint has no ANSI slot, can't render exactly here
+  type:     *phosphor
+  comment:  *smoke

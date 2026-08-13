@@ -1,0 +1,18 @@
+# ember-fire — identity v0.1
+#
+# Brand elements alight.yml doesn't own: typography intent, logo references, and which accent color each tool uses. `alight.yml` stays scoped to terminal colours only (matches base16/iTerm2-scheme. This file is everything else.
+
+typography:
+  logo:
+    family: "Yumex Script"
+    tracking: -9%
+  programme_name:
+    family: "Yumex"
+    tracking: -9%
+
+assets:
+  logo_svg: assets/logo.svg
+
+tools:
+  wildfire:
+    color: blaze
