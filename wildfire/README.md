@@ -11,5 +11,16 @@ Link anything to a *spark* by writing `[[a phrase]]` in a wisp or another spark.
 Everything's plain markdown, readable with or without *wildfire* installed.
 
 ---
+## Installation
 
-**status**: early days not installable yet. See [ARCHITECTURE.md](./ARCHITECTURE.md) for my actual reasoning and suffering behind it.
+```bash
+uv tool install --editable .
+uv tool update-shell
+```
+(from inside `wildfire/` - editable, so changes to source are picked up without reinstalling)
+
+see the [uv tools guide](https://docs.astral.sh/uv/guides/tools/) and [uv tools concepts](https://docs.astral.sh/uv/concepts/tools/) for details.
+
+---
+
+**status**: installable, in active development. See [ARCHITECTURE.md](ARCHITECTURE.md)
