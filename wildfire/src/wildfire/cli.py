@@ -52,11 +52,11 @@ def _format_matches(entries: list[Entry], notes: list[Note], empty_message: str)
     if entries:
         lines.append("Wisps:")
         for entry in entries:
-            lines.append(f"  {entry.date.isoformat()} {entry.time} {entry.text}")
+            lines.append(f" ∘ {entry.date.isoformat()} {entry.time} {entry.text}")
     if notes:
         lines.append("Sparks:")
         for note in notes:
-            lines.append(f" {note.name}")
+            lines.append(f" ✦ {note.name}")
     return "\n".join(lines)
 
 
@@ -140,6 +140,33 @@ def run(args: list[str], corpus: Corpus) -> str:
         note.delete()
         return f"{note.name} has been deleted."
 
+    elif first == "--help" or first ==  "-h":
+        return """wildfire — catch your wisps, turn them into sparks
+
+USAGE
+  wildfire <text>                quick-add a wisp
+  wildfire -                     read a wisp from stdin
+
+SPARKS
+  --note <title>                 create or open a spark by title
+  --show <name>                  print a spark's contents
+  --open <name>                  jump to a spark, creating it if it doesn't exist
+  --delete <name>                show what backlinks would break
+  --delete <name> --confirm      actually delete
+
+CATCHING
+  --catch <query> --as <title>   turn a matching wisp into a spark
+  --catch-latest <title>         turn the most recent wisp into a spark
+
+FINDING
+  --search <query>               search wisps and sparks
+  --backlinks <name>             show what links to a spark
+  --backlinks <name> --fuzzy     ...typo-tolerant
+  --list, --list-wisps, --list-sparks
+
+  -h, --help                     show this text
+        """
+
     elif first == "--list":
         return _format_lists(entries=corpus.all_entries(), notes=corpus.list_notes())
     elif first == "--list-wisps":
@@ -155,7 +182,7 @@ def run(args: list[str], corpus: Corpus) -> str:
         note = corpus.create_note(title)
         if existed:
             return f"Spark already exists: {note.name}"
-        return f"Spark created: {note.name}"
+        return f"✦ Spark created: {note.name}"
 
     elif first == "--open":
         name = " ".join(rest)
@@ -191,7 +218,7 @@ def run(args: list[str], corpus: Corpus) -> str:
         entry = corpus.append_entry(text)
     except ValueError:
         return "Your mind can't be blank, right?"
-    return f" •~~ {entry.time} {entry.text}"
+    return f" ∘ {entry.time} {entry.text}"
 
 
 def main() -> None:
