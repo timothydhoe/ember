@@ -19,7 +19,7 @@ uv tool update-shell
 ```
 (from inside `wildfire/` - editable, so changes to source are picked up without reinstalling)
 
-see the [uv tools guide](https://docs.astral.sh/uv/guides/tools/) and [uv tools concepts](https://docs.astral.sh/uv/concepts/tools/) for details.
+see the [uv tools guide](https://docs.astral.sh/uv/guides/tools/) and [uv tools concepts](https://docs.astral.sh/uv/concepts/tools/) for details, as well as [PEP 660](https://peps.python.org/pep-0660/)
 
 ---
 
