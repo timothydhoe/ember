@@ -11,22 +11,22 @@ named: &named
   coal:      &coal      "#050D16"
   alight:    &alight    "#F8D860"
   flare:     &flare     "#C8E0F8"
-  kindling:  &kindling  "#E0B898"
+  kindling:  &kindling  "#E1D199"
   verdigris: &verdigris "#40E888"
   flint:     &flint     "#604078"
   spark:     &spark     "#F0F0F0"
-  smolder:   &smolder   "#889050"
+  smolder:   &smolder   "#99a838"
   pilot:     &pilot     "#3850A8"
   dusk:      &dusk      "#9858E8"
   ember:     &ember     "#982828"
 
   # For legibility and flexibility
-  cinder:     &cinder     "#D75757"
+  cinder:     &cinder     "#E89292"
   bunsen:     &bunsen     "#667DCF"
-  amethyst:   &amethyst   "#9871B6"
+  amethyst:   &amethyst   "#9B5EC9"
   phosphor:   &phosphor   "#3C9C98"
   smoke:      &smoke      "#6F7A8C"
-  blaze:      &blaze      "#CE4444"
+  blaze:      &blaze      "#D66666"
   witchlight: &witchlight "#5AB5B1"
 
 palette:
