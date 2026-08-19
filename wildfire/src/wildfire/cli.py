@@ -1,16 +1,7 @@
 """
 wildfire.cli
 ~~~~~~~~~~~~
-Entry point for the `wildfire` command.
-
-    wildfire your thought right here        -> quick-add
-    wildfire -                              -> quick-add from stdin
-    wildfire --note "Title"                 -> create a spark (Note)
-    wildfire --search <query>               -> substring search
-    wildfire --backlinks <name>             -> show what links to <name>
-    wildfire --catch-latest "Title"         -> catch the most recent wisp
-    wildfire --catch <query> --as "Title"   -> catch a matched wisp
-    wildfire                                -> ??? (future TUI?)
+Entry point for the `wildfire` command. Run `wildfire --help` for the full flag reference.
 """
 
 from __future__ import annotations
@@ -32,14 +23,14 @@ def _format_lists(
         if entries:
             lines.append("Wisps:")
             for entry in entries:
-                lines.append(f" {entry.date.isoformat()} {entry.time} {entry.text}")
+                lines.append(f" ∘ {entry.date.isoformat()} {entry.time} {entry.text}")
         else:
             lines.append("No wisps created yet.")
     if notes is not None:
         if notes:
             lines.append("Sparks:")
             for note in notes:
-                lines.append(f" {note.name}")
+                lines.append(f" ✦ {note.name}")
         else:
             lines.append("No sparks created yet.")
     return "\n".join(lines)
@@ -140,7 +131,7 @@ def run(args: list[str], corpus: Corpus) -> str:
         note.delete()
         return f"{note.name} has been deleted."
 
-    elif first == "--help" or first ==  "-h":
+    elif first == "--help" or first == "-h":
         return """wildfire — catch your wisps, turn them into sparks
 
 USAGE
