@@ -1,0 +1,33 @@
+# Generated from alight.yml -- do not edit by hand, re-run export_alacritty.py
+
+[colors.primary]
+background = "#0B162D"
+foreground = "#F4F2F1"
+
+[colors.cursor]
+text = "#0B162D"
+cursor = "#F8D860"
+
+[colors.selection]
+text = "#F4F2F1"
+background = "#2350AE"
+
+[colors.normal]
+black = "#050D16"
+red = "#D66666"
+green = "#99a838"
+yellow = "#E1D199"
+blue = "#667DCF"
+magenta = "#9B5EC9"
+cyan = "#3C9C98"
+white = "#F0F0F0"
+
+[colors.bright]
+black = "#6F7A8C"
+red = "#E89292"
+green = "#40E888"
+yellow = "#F8D860"
+blue = "#C8E0F8"
+magenta = "#9858E8"
+cyan = "#5AB5B1"
+white = "#F4F2F1"
