@@ -1,0 +1,12 @@
+[project]
+name = "alight"
+version = "0.1.0"
+description = "ember's brand palette: colors, terminal exports, and identity"
+requires-python = ">=3.12"
+[dependency-groups]
+scripts = [
+    "pyyaml>=6.0.3",
+]
+
+[tool.uv]
+default-groups = ["scripts"]
