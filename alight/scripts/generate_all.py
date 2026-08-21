@@ -14,6 +14,7 @@ import export_ghostty
 import export_iterm2
 import export_alacritty
 import export_terminal_app
+import export_identity
 import export_preview
 
 
@@ -29,6 +30,7 @@ def main() -> bool:
         ("iterm2", export_iterm2),
         ("alacritty", export_alacritty),
         ("terminal_app", export_terminal_app),
+        ("identity", export_identity),
     ]:
         print(f"== {name} ==")
         results.append((name, module.main()))
