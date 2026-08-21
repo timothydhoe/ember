@@ -1,58 +1,60 @@
-# ember-fire — palette v0.5
+# ember-alight — palette v0.6
 
 named: &named
   # base tones
   hearth:    &hearth    "#0B162D"
-  chalk:     &chalk     "#F4F2F1"
-  beacon:    &beacon    "#2350AE"
+  chalk:     &chalk     "#FBF7F5"
+  beacon:    &beacon    "#4BF0FC"
 
-  # the twelve
-  ash:       &ash       "#16273D"
-  coal:      &coal      "#050D16"
-  alight:    &alight    "#F8D860"
-  flare:     &flare     "#C8E0F8"
-  kindling:  &kindling  "#E1D199"
-  verdigris: &verdigris "#40E888"
-  flint:     &flint     "#604078"
-  spark:     &spark     "#F0F0F0"
-  smolder:   &smolder   "#99a838"
-  pilot:     &pilot     "#3850A8"
-  dusk:      &dusk      "#9858E8"
-  ember:     &ember     "#982828"
+  # main colours
+  ash:       &ash       "#A09998"
+  coal:      &coal      "#0E1D39"
+  alight:    &alight    "#C2FD12"
+  flare:     &flare     "#F74C3F"
+  kindling:  &kindling  "#E87042"
+  verdigris: &verdigris "#47EB8E"
+  foxfire:   &foxfire   "#2E8B57"
+  spark:     &spark     "#F3FFFB"
+  smolder:   &smolder   "#DB9A2F"
+  pilot:     &pilot     "#3F53AB"
+  dusk:      &dusk      "#3E279B"
+  fuel:      &fuel      "#0C5678"
+  ember-dark:  &ember-dark  "#992929"
+  ember-light: &ember-light "#F9A851"
 
   # For legibility and flexibility
-  cinder:     &cinder     "#E89292"
-  bunsen:     &bunsen     "#667DCF"
-  amethyst:   &amethyst   "#9B5EC9"
-  phosphor:   &phosphor   "#3C9C98"
-  smoke:      &smoke      "#6F7A8C"
-  blaze:      &blaze      "#D66666"
-  witchlight: &witchlight "#5AB5B1"
+  cinder:     &cinder     "#0E0E18"
+  bunsen:     &bunsen     "#985DE9"
+  amethyst:   &amethyst   "#BB6FE2"
+  phosphor:   &phosphor   "#67413C"
+  smoke:      &smoke      "#222425"
+  blaze:      &blaze      "#F3453F"
+  witchlight: &witchlight "#FFFC99"
 
 palette:
   name: ember
   background: *hearth
   foreground: *chalk
-  selection:  *beacon    
-  cursor:     *alight
-  bold:       *alight
+  selection:  *fuel
+  cursor:     *verdigris
+  bold:       *chalk
 
 ansi:
   black:          *coal
   red:            *blaze
-  green:          *smolder
+  green:          *verdigris
   yellow:         *kindling
-  blue:           *bunsen
+  blue:           *pilot
   magenta:        *amethyst
-  cyan:           *phosphor
+  cyan:           *fuel
   white:          *spark
-  bright_black:   *smoke
-  bright_red:     *cinder
+  bright_black:   *ash
+  bright_red:     *flare
   bright_green:   *verdigris
   bright_yellow:  *alight
-  bright_blue:    *flare
-  bright_magenta: *dusk
-  bright_cyan:    *witchlight
+  bright_blue:    *dusk
+  bright_magenta: *bunsen
+  bright_cyan:    *beacon
   bright_white:   *chalk
 
 font:
@@ -66,13 +68,13 @@ window:
   background_blur: 0.40
 
 semantic:
-  error:    *cinder
+  error:    *flare
   warning:  *alight
   success:  *verdigris
   accent:   *alight
-  muted:    *smoke
-  link:     *bunsen
-  tag:      *dusk
-  keyword:  *amethyst  # was flint -- flint has no ANSI slot, can't render exactly here
-  type:     *phosphor
-  comment:  *smoke
+  muted:    *ash
+  link:     *pilot
+  tag:      *bunsen
+  keyword:  *amethyst
+  type:     *fuel
+  comment:  *ash

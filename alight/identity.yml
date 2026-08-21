@@ -1,6 +1,6 @@
-# ember-fire — identity v0.1
+# ember — identity v0.1
 #
-# Brand elements alight.yml doesn't own: typography intent, logo references, and which accent color each tool uses. `alight.yml` stays scoped to terminal colours only (matches base16/iTerm2-scheme. This file is everything else.
+# Brand elements alight.yml doesn't own: typography intent, logo references, and which accent color each tool uses. `alight.yml` stays scoped to colours only.
 
 typography:
   logo:
@@ -12,6 +12,10 @@ typography:
 
 assets:
   logo_svg: assets/logo.svg
+
+brand:
+  ember:
+    gradient: [ember-dark, ember-light]
 
 tools:
   wildfire:

@@ -92,7 +92,9 @@ def build(yaml_data: dict, base: dict) -> dict:
         palette["background"], alpha=bg_alpha
     )
     out["TextColor"] = hex_to_nscolor_archive(palette["foreground"])
-    out["SelectionColor"] = hex_to_nscolor_archive(palette["selection"])
+    out["SelectionColor"] = hex_to_nscolor_archive(
+        palette["selection"], alpha=window.get("selection_opacity")
+    )
     out["CursorColor"] = hex_to_nscolor_archive(palette["cursor"])
     out["TextBoldColor"] = hex_to_nscolor_archive(palette["bold"])
 

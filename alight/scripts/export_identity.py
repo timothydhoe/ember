@@ -29,8 +29,12 @@ def main() -> bool:
     tools = {
         tool: named[spec["color"]] for tool, spec in identity.get("tools", {}).items()
     }
+    brand = {
+        scope: {"gradient": [named[c] for c in spec.get("gradient", [])]}
+        for scope, spec in identity.get("brand", {}).items()
+    }
 
-    resolved = {"semantic": semantic, "tools": tools}
+    resolved = {"semantic": semantic, "tools": tools, "brand": brand}
 
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     header = (
@@ -43,7 +47,11 @@ def main() -> bool:
 
     # self-verify against source, same pattern as the other exporters
     written = yaml.safe_load(OUTPUT_FILE.read_text(encoding="utf-8"))
-    ok = written.get("semantic") == semantic and written.get("tools") == tools
+    ok = (
+        written.get("semantic") == semantic
+        and written.get("tools") == tools
+        and written.get("brand") == brand
+    )
     print("ALL MATCH -- safe to use" if ok else "MISMATCHES FOUND")
     return ok
 

@@ -27,6 +27,7 @@ def main() -> None:
 
     valid_names = set(scheme["named"].keys())
     tools = identity.get("tools", {})
+    brand = identity.get("brand", {})
     errors: list[str] = []
 
     for tool, spec in tools.items():
@@ -35,6 +36,13 @@ def main() -> None:
             errors.append(
                 f"tools.{tool}.color = '{color}' -- not in alight.yml's named palette"
             )
+
+    for scope, spec in brand.items():
+        for color in spec.get("gradient", []):
+            if color not in valid_names:
+                errors.append(
+                    f"brand.{scope}.gradient contains '{color}' -- not in alight.yml's named palette"
+                )
 
     if errors:
         print("FAILED:")
@@ -46,6 +54,11 @@ def main() -> None:
     for tool, spec in tools.items():
         hexval = scheme["named"][spec["color"]]
         print(f"  {tool:12s} -> {spec['color']} ({hexval})")
+
+    print(f"OK -- {len(brand)} brand gradient reference(s) all resolve correctly")
+    for scope, spec in brand.items():
+        hexvals = [scheme["named"][c] for c in spec.get("gradient", [])]
+        print(f"  {scope:12s} -> {spec['gradient']} ({', '.join(hexvals)})")
 
 
 if __name__ == "__main__":
