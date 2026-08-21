@@ -6,210 +6,49 @@ Entry point for the `wildfire` command. Run `wildfire --help` for the full flag 
 
 from __future__ import annotations
 
-import shlex
-import subprocess
 import sys
 
+from . import identity
 from .config import Config
-from .corpus import CatchResult, Corpus
-from .models import Entry, Note
+from .corpus import Corpus
+from .handlers import RunResult, run
 
 
-def _format_lists(
-    entries: list[Entry] | None = None, notes: list[Note] | None = None
-) -> str:
-    lines = []
-    if entries is not None:
-        if entries:
-            lines.append("Wisps:")
-            for entry in entries:
-                lines.append(f" ∘ {entry.date.isoformat()} {entry.time} {entry.text}")
+def _hex_to_rgb(hexval: str) -> tuple[int, int, int]:
+    hexval = hexval.lstrip("#")
+    return int(hexval[0:2], 16), int(hexval[2:4], 16), int(hexval[4:6], 16)
+
+
+def _render(result: RunResult) -> str:
+    if result.role is None or not sys.stdout.isatty():
+        return result.text
+    colors = identity.resolve_colors()
+    if colors is None:
+        return result.text
+    if result.role == "banner":
+        return _render_banner(result.text, colors)
+    if result.role not in colors:
+        return result.text
+    r, g, b = _hex_to_rgb(colors[result.role])
+    return f"\x1b[38;2;{r};{g};{b}m{result.text}\x1b[0m"
+
+
+def _render_banner(text: str, colors: dict[str, str]) -> str:
+    accent = colors.get("accent")
+    wildfire_accent = identity.resolve_accent() or accent
+    lines = text.splitlines()
+    out = []
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if i == 0 and stripped and wildfire_accent:
+            r, g, b = _hex_to_rgb(wildfire_accent)
+            out.append(f"\x1b[1m\x1b[38;2;{r};{g};{b}m{line}\x1b[0m")
+        elif stripped and stripped.isupper() and stripped.isalpha and accent:
+            r, g, b = _hex_to_rgb(accent)
+            out.append(f"\x1b[1m\x1b[38;2;{r};{g};{b}m{line}\x1b[0m")
         else:
-            lines.append("No wisps created yet.")
-    if notes is not None:
-        if notes:
-            lines.append("Sparks:")
-            for note in notes:
-                lines.append(f" ✦ {note.name}")
-        else:
-            lines.append("No sparks created yet.")
-    return "\n".join(lines)
-
-
-def _format_matches(entries: list[Entry], notes: list[Note], empty_message: str) -> str:
-    if not entries and not notes:
-        return empty_message
-    lines = []
-    if entries:
-        lines.append("Wisps:")
-        for entry in entries:
-            lines.append(f" ∘ {entry.date.isoformat()} {entry.time} {entry.text}")
-    if notes:
-        lines.append("Sparks:")
-        for note in notes:
-            lines.append(f" ✦ {note.name}")
-    return "\n".join(lines)
-
-
-def _format_catch_result(
-    result: CatchResult, caught_entry: Entry, match_count: int | None = None
-) -> str:
-    lines = [
-        f"Wisp caught into: {result.note.name}",
-        f' "{caught_entry.text}"',
-    ]
-    if match_count is not None and match_count > 1:
-        lines.append(f"(most recent of {match_count} matches)")
-    if result.suggestions:
-        lines.append("suggested links:")
-        for suggestion in result.suggestions:
-            lines.append(
-                f" {suggestion.note.name} • shares {suggestion.score}) word(s)"
-            )
-    return "\n".join(lines)
-
-
-def run(args: list[str], corpus: Corpus) -> str:
-    if not args:
-        return "No thoughts at all?"
-
-    first, *rest = args
-
-    if first == "--backlinks":
-        fuzzy = "--fuzzy" in rest
-        name = " ".join(word for word in rest if word != "--fuzzy")
-        if fuzzy:
-            result = corpus.fuzzy_backlinks(name)
-            return _format_matches(result.entries, result.notes, "No matches found.")
-        result = corpus.backlinks(name)
-        return _format_matches(result.entries, result.notes, "No links here yet.")
-
-    elif first == "--catch":
-        if "--as" not in rest:
-            return "Try: --catch <query> --as <title>"
-        split_index = rest.index("--as")
-        query = " ".join(rest[:split_index])
-        title = " ".join(rest[split_index + 1 :])
-        if not query.strip() or not title.strip():
-            return "Try: --catch <query> --as <title>"
-        matches = corpus.search(query).entries
-        if not matches:
-            return f"No wisp found matching '{query}'."
-        entry = matches[-1]
-        result = corpus.catch(entry, title)
-        return _format_catch_result(result, entry, match_count=len(matches))
-
-    elif first == "--catch-latest":
-        title = " ".join(rest)
-        if not title.strip():
-            return "Try: --catch-latest <title>"
-        entries = corpus.all_entries()
-        if not entries:
-            return "No wisps have been found."
-        last_entry = entries[-1]
-        result = corpus.catch(last_entry, title)
-        return _format_catch_result(result, last_entry)
-
-    elif first == "--delete":
-        confirm = "--confirm" in rest
-        name = " ".join(word for word in rest if word != "--confirm")
-        if not name.strip():
-            return "Try: --delete <name>"
-        note = corpus.get_note(name)
-        if not note.exists:
-            return "Nothing there. Are you sure it exists?"
-        backlinks = corpus.backlinks(name)
-        if not backlinks.entries and not backlinks.notes:
-            warning = f"'{note.name}' has no backlinks."
-        else:
-            preview = _format_matches(
-                backlinks.entries, backlinks.notes, "Nothing links here yet"
-            )
-            warning = f"Deleting '{note.name}' will break these backlinks:\n{preview}"
-        if not confirm:
-            return f"{warning}\nRun again with --confirm to proceed."
-        note.delete()
-        return f"{note.name} has been deleted."
-
-    elif first == "--help" or first == "-h":
-        return """wildfire — catch your wisps, turn them into sparks
-
-USAGE
-  wildfire <text>                quick-add a wisp
-  wildfire -                     read a wisp from stdin
-
-SPARKS
-  --note <title>                 create or open a spark by title
-  --show <name>                  print a spark's contents
-  --open <name>                  jump to a spark, creating it if it doesn't exist
-  --delete <name>                show what backlinks would break
-  --delete <name> --confirm      actually delete
-
-CATCHING
-  --catch <query> --as <title>   turn a matching wisp into a spark
-  --catch-latest <title>         turn the most recent wisp into a spark
-
-FINDING
-  --search <query>               search wisps and sparks
-  --backlinks <name>             show what links to a spark
-  --backlinks <name> --fuzzy     ...typo-tolerant
-  --list, --list-wisps, --list-sparks
-
-  -h, --help                     show this text
-        """
-
-    elif first == "--list":
-        return _format_lists(entries=corpus.all_entries(), notes=corpus.list_notes())
-    elif first == "--list-wisps":
-        return _format_lists(entries=corpus.all_entries())
-    elif first == "--list-sparks":
-        return _format_lists(notes=corpus.list_notes())
-
-    elif first == "--note":
-        title = " ".join(rest)
-        if not title.strip():
-            return "Try: --note <title>"
-        existed = corpus.get_note(title).exists
-        note = corpus.create_note(title)
-        if existed:
-            return f"Spark already exists: {note.name}"
-        return f"✦ Spark created: {note.name}"
-
-    elif first == "--open":
-        name = " ".join(rest)
-        if not name.strip():
-            return "Try: --open <name>"
-        note = corpus.create_note(name)
-        editor_cmd = corpus.config.resolve_editor()
-        try:
-            result = subprocess.run(shlex.split(editor_cmd) + [note.path])
-        except FileNotFoundError:
-            return f"Couldn't launch editor: '{editor_cmd}'. Set EDITOR, or 'editor' in config.toml."
-        return f"Closed: {note.name}"
-
-    elif first == "--search":
-        query = " ".join(rest)
-        if not query:
-            return "Query is missing. Cannot find emptiness."
-        results = corpus.search(query)
-        return _format_matches(results.entries, results.notes, "No matches.")
-
-    elif first == "--show":
-        name = " ".join(rest)
-        if not name.strip():
-            return "Try: --show <name>"
-        note = corpus.get_note(name)
-        if not note.exists:
-            return f"No spark called '{name}' yet. --open will create it."
-        return note.read()
-
-    # not a recognised flag -> quick-add
-    text = " ".join(args)
-    try:
-        entry = corpus.append_entry(text)
-    except ValueError:
-        return "Your mind can't be blank, right?"
-    return f" ∘ {entry.time} {entry.text}"
+            out.append(line)
+    return "\n".join(out)
 
 
 def main() -> None:
@@ -221,4 +60,6 @@ def main() -> None:
         text = sys.stdin.readline().strip()
         print(run([text], corpus))
     else:
-        print(run(args, corpus))
+        result = run(args, corpus)
+
+    print(_render(result))
