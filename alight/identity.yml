@@ -1,4 +1,4 @@
-# ember — identity v0.1
+# ember — identity v0.6
 #
 # Brand elements alight.yml doesn't own: typography intent, logo references, and which accent color each tool uses. `alight.yml` stays scoped to colours only.
 
@@ -10,13 +10,29 @@ typography:
     family: "Yumex"
     tracking: -9%
 
-assets:
-  logo_svg: assets/logo.svg
-
 brand:
   ember:
     gradient: [ember-dark, ember-light]
+    assets:
+      dark:
+        flame_sparkles: assets/brand/ember-dark-flame-sparkles.svg
+        full_logo:      assets/brand/ember-dark-full-logo.svg
+        wordmark:       assets/brand/ember-dark-wordmark.svg
+      light:
+        flame_sparkles: assets/brand/ember-light-flame-sparkles.svg
+        full_logo:      assets/brand/ember-light-full-logo.svg
+        wordmark:       assets/brand/ember-light-wordmark.svg
 
 tools:
   wildfire:
     color: blaze
+    assets:
+      badge_standard: assets/tools/wildfire-badge-standard.svg
+      badge_peculiar: assets/tools/wildfire-badge-peculiar.svg
+      wordmark:       assets/tools/wildfire-wordmark.svg
+  alight:
+    color: alight
+    assets:
+      badge_standard: assets/tools/alight-badge-standard.svg
+      badge_peculiar: assets/tools/alight-badge-peculiar.svg
+      wordmark:       assets/tools/alight-wordmark.svg

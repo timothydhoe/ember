@@ -12,6 +12,7 @@ semantic:
   comment: '#A09998'
 tools:
   wildfire: '#F3453F'
+  alight: '#C2FD12'
 brand:
   ember:
     gradient:

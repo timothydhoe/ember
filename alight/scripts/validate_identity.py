@@ -44,6 +44,19 @@ def main() -> None:
                     f"brand.{scope}.gradient contains '{color}' -- not in alight.yml's named palette"
                 )
 
+    asset_paths: dict[str, str] = {}
+    for tool, spec in tools.items():
+        for kind, path in spec.get("assets", {}).items():
+            asset_paths[f"tools.{tool}.assets.{kind}"] = path
+    for scope, spec in brand.items():
+        for variant, kinds in spec.get("assets", {}).items():
+            for kind, path in kinds.items():
+                asset_paths[f"brand.{scope}.assets.{variant}.{kind}"] = path
+
+    for label, rel_path in asset_paths.items():
+        if not (BASE_DIR / rel_path).exists():
+            errors.append(f"{label} = '{rel_path}' -- file does not exist")
+
     if errors:
         print("FAILED:")
         for e in errors:
@@ -59,6 +72,8 @@ def main() -> None:
     for scope, spec in brand.items():
         hexvals = [scheme["named"][c] for c in spec.get("gradient", [])]
         print(f"  {scope:12s} -> {spec['gradient']} ({', '.join(hexvals)})")
+
+    print(f"OK -- {len(asset_paths)} asset path reference(s) point to real files")
 
 
 if __name__ == "__main__":
