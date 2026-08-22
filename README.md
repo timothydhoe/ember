@@ -1,5 +1,8 @@
 # ember
 
+![alight](https://img.shields.io/static/v1?label=alight&message=in%20progress&color=C2FD12&style=flat-square)
+![wildfire](https://img.shields.io/static/v1?label=wildfire&message=early%20days&color=F3453F&style=flat-square)
+
 Small, practical developer tools with design and UX in mind.
 
 Welcome to the hearth. Here, it's nice and cosy. And tools are readily available for you to use and modify.
@@ -32,7 +35,7 @@ Some of these are further along than others. A couple are barely more than a nam
 | ember-kiln | SPARQL / RDF query & transform CLI | concept |
 | ember-kindling | practice git, branch by branch | concept |
 | ember-smolder | Linked Data Event Streams (LDES) client | pre-alpha |
-| ember-wildfire | plain-markdown notes; ideas that spread and link | concept |
+| ember-wildfire | plain-markdown notes; ideas that spread and link | active development |
 
 ---
 ## Where things stand

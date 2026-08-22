@@ -1,5 +1,7 @@
 # Wildfire
 
+[![ember tool](https://img.shields.io/static/v1?label=&message=ember%20tool&color=0B162D&style=flat-square)](https://github.com/timothydhoe/ember)
+
 Plain markdown notes; part of the ember toolkit.
 *A note-taking app that lets you catch your wisps and turns them into sparks.*
 
