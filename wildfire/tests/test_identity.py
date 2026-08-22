@@ -1,3 +1,4 @@
+from pathlib import Path
 from wildfire import identity
 
 
@@ -61,3 +62,7 @@ def test_resolve_accent_unknown_tool(monkeypatch, tmp_path):
     monkeypatch.setattr(identity, "IDENTITY_FILE", f)
     assert identity.resolve_accent("flint") is None
 
+def test_identity_file_default_path():
+    assert identity.IDENTITY_FILE == (
+            Path.home() / ".ember-hearth" / "identity" / "identity.yml"
+    )
