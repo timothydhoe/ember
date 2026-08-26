@@ -1,6 +1,7 @@
 # Wildfire
 
 [![ember tool](https://img.shields.io/static/v1?label=&message=ember%20tool&color=0B162D&style=flat-square)](https://github.com/timothydhoe/ember)
+[![wildfire](https://img.shields.io/static/v1?label=&message=wildfire&color=C27370&style=flat-square)](https://github.com/timothydhoe/ember)
 
 Plain markdown notes; part of the ember toolkit.
 *A note-taking app that lets you catch your wisps and turns them into sparks.*
@@ -15,6 +16,15 @@ Everything's plain markdown, readable with or without *wildfire* installed.
 ---
 ## Installation
 
+**beta** — it works, but changes have been planned in for the near future
+
+## Installation
+**Just want to use it:**
+```bash
+uv tool install "git+https://github.com/timothydhoe/ember#subdirectory=wildfire"
+```
+
+**Want to edit the source too:**
 ```bash
 uv tool install --editable .
 uv tool update-shell
@@ -25,4 +35,4 @@ see the [uv tools guide](https://docs.astral.sh/uv/guides/tools/) and [uv tools 
 
 ---
 
-**status**: installable, in active development. See [ARCHITECTURE.md](ARCHITECTURE.md)
+**status**: beta; it works but still finding its shape... in active development. See [ARCHITECTURE.md](ARCHITECTURE.md)
