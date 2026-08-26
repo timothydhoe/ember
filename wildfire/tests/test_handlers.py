@@ -163,7 +163,7 @@ def test_run_open_creates_and_repoerts_closed(monkeypatch, corpus):
     monkeypatch.setattr("subprocess.run", fake_run)
     result = run(["--open", "Freshly Sparked"], corpus)
     assert corpus.get_note("Freshly Sparked").exists
-    assert "Closed: freshly-sparked" in result.text
+    assert "Closed: freshly sparked" in result.text
 
 
 def test_run_open_missing_editor_binary(monkeypatch, corpus):
@@ -183,7 +183,7 @@ def test_run_list_shows_both_sections(corpus):
     corpus.create_note("test spark")
     result = run(["--list"], corpus)
     assert "test wisp" in result.text
-    assert "test-spark" in result.text
+    assert "test spark" in result.text
 
 
 def test_run_list_wisps_only_excludes_sparks(corpus):
@@ -198,7 +198,7 @@ def test_run_list_sparks_only_excludes_wisps(corpus):
     corpus.append_entry("test wisp")
     corpus.create_note("Test Spark")
     result = run(["--list-sparks"], corpus)
-    assert "test-spark" in result.text
+    assert "test spark" in result.text
     assert "wisps:" not in result.text.lower()
 
 

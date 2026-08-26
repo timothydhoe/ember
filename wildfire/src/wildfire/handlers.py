@@ -41,7 +41,7 @@ def _format_lists(
         if notes:
             lines.append("Sparks:")
             for note in notes:
-                lines.append(f" ✦ {note.name}")
+                lines.append(f" ✦ {note.title}")
         else:
             lines.append("No sparks created yet.")
     return "\n".join(lines)
@@ -58,7 +58,7 @@ def _format_matches(entries: list[Entry], notes: list[Note], empty_message: str)
     if notes:
         lines.append("Sparks:")
         for note in notes:
-            lines.append(f" ✦ {note.name}")
+            lines.append(f" ✦ {note.title}")
     return "\n".join(lines)
 
 
@@ -66,7 +66,7 @@ def _format_catch_result(
     result: CatchResult, caught_entry: Entry, match_count: int | None = None
 ) -> str:
     lines = [
-        f"Wisp caught into: {result.note.name}",
+        f"Wisp caught into: {result.note.title}",
         f' "{caught_entry.text}"',
     ]
     if match_count is not None and match_count > 1:
@@ -75,7 +75,7 @@ def _format_catch_result(
         lines.append("suggested links:")
         for suggestion in result.suggestions:
             lines.append(
-                f" {suggestion.note.name} • shares {suggestion.score}) word(s)"
+                f" {suggestion.note.title} • shares {suggestion.score}) word(s)"
             )
     return "\n".join(lines)
 
@@ -138,18 +138,18 @@ def _handle_delete(rest: list[str], corpus: Corpus) -> RunResult:
         return RunResult("Nothing there. Are you sure it exists?", role="error")
     backlinks = corpus.backlinks(name)
     if not backlinks.entries and not backlinks.notes:
-        warning = f"'{note.name}' has no backlinks."
+        warning = f"'{note.title}' has no backlinks."
     else:
         preview = _format_matches(
             backlinks.entries, backlinks.notes, "Nothing links here yet"
         )
-        warning = f"Deleting '{note.name}' will break these backlinks:\n{preview}"
+        warning = f"Deleting '{note.title}' will break these backlinks:\n{preview}"
     if not confirm:
         return RunResult(
             f"{warning}\nRun again with --confirm to proceed.", role="warning"
         )
     note.delete()
-    return RunResult(f"{note.name} has been deleted.", role="success")
+    return RunResult(f"{note.title} has been deleted.", role="success")
 
 
 def _handle_help(rest: list[str], corpus: Corpus) -> RunResult:
@@ -204,8 +204,8 @@ def _handle_note(rest: list[str], corpus: Corpus) -> RunResult:
     existed = corpus.get_note(title).exists
     note = corpus.create_note(title)
     if existed:
-        return RunResult(f"Spark already exists: {note.name}")
-    return RunResult(f"✦ Spark created: {note.name}", role="success")
+        return RunResult(f"Spark already exists: {note.title}")
+    return RunResult(f"✦ Spark created: {note.title}", role="success")
 
 
 def _handle_open(rest: list[str], corpus: Corpus) -> RunResult:
@@ -221,7 +221,7 @@ def _handle_open(rest: list[str], corpus: Corpus) -> RunResult:
             f"Couldn't launch editor: '{editor_cmd}'. Set EDITOR, or 'editor' in config.toml.",
             role="error",
         )
-    return RunResult(f"Closed: {note.name}", role="success")
+    return RunResult(f"Closed: {note.title}", role="success")
 
 
 def _handle_search(rest: list[str], corpus: Corpus) -> RunResult:
