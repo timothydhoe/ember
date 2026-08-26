@@ -41,13 +41,13 @@ Executes every cross-file operation:
 
 Also defines four small result types: `Backlinks`, `SearchResults`, `CatchResult`, `LinkSuggestion`.
 
+**`handlers.py`**
+One `_handle_` per flag. `RunResult.role` tells `cli.py` what colour to use.
+
 **`cli.py`**
 **Entry point for the `wildfire` command.**
 The only file touching `sys.argv`/`sys.stdin`/`print` directly.
 
-Parses `sys.argv`, dispatches on `flag`s, calls `Corpus` methods, and formats the results into strings.
-
-`run()` takes everything as parameters and returns a string, which is what makes this testable without touching the filesystem or the terminal. *Note: `--open` and `--delete` do cross I/O boundaries (subrpocess.run) that tests stub out via 'monkeypatch'.*
 
 ---
 ## Core constraints
