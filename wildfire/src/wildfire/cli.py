@@ -57,9 +57,6 @@ def main() -> None:
 
     args = sys.argv[1:]
     if args == ["-"]:
-        text = sys.stdin.readline().strip()
-        print(run([text], corpus))
-    else:
-        result = run(args, corpus)
-
+        args = [sys.stdin.readline().strip()]
+    result = run(args, corpus)
     print(_render(result))
