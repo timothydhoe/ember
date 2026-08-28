@@ -9,17 +9,27 @@ Usage:
 
 from __future__ import annotations
 
-import validate_identity
-import export_ghostty
-import export_iterm2
 import export_alacritty
-import export_terminal_app
+import export_ghostty
 import export_identity
+import export_iterm2
+import export_nvim
 import export_preview
+import export_readme_swatch
+import export_terminal_app
+import export_tmux
+import export_vhs_theme
+import export_vim
+import validate_identity
+from _ansi import bold, cyan, green, red
+
+
+def section(name: str) -> None:
+    print(cyan(bold(f"== {name} ==")))
 
 
 def main() -> bool:
-    print("== validating identity.yml references ==")
+    section("validating identity.yml references")
     validate_identity.main()
     print()
 
@@ -30,25 +40,34 @@ def main() -> bool:
         ("iterm2", export_iterm2),
         ("alacritty", export_alacritty),
         ("terminal_app", export_terminal_app),
+        ("tmux", export_tmux),
+        ("vim", export_vim),
+        ("nvim", export_nvim),
+        ("vhs_theme", export_vhs_theme),
         ("identity", export_identity),
+        ("readme_swatch", export_readme_swatch),
     ]:
-        print(f"== {name} ==")
+        section(name)
         results.append((name, module.main()))
         print()
 
-    print("== preview (writes preview.html) ==")
-    export_preview.main()
-    results.append(("preview", True))
+    section("preview (writes exports/preview.html)")
+    results.append(("preview", export_preview.main()))
     print()
 
-    print("== Summary ==")
+    section("Summary")
     ok = True
     for name, passed in results:
-        print(f" {name:14s} {'OK' if passed else 'MISMATCH'}")
+        tag = green("OK") if passed else red("MISMATCH")
+        print(f" {name:14s} {tag}")
         ok &= passed
     if not ok:
         print(
-            "\nOne or more exports did not verify. Do not treat outputs as safe to use."
+            bold(
+                red(
+                    "\nOne or more exports did not verify. Do not treat outputs as safe to use."
+                )
+            )
         )
     return ok
 

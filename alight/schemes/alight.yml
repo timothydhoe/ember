@@ -1,61 +1,76 @@
-# ember-alight — palette v0.6
+# ember-alight — palette v0.4
 
-named: &named
-  # base tones
-  hearth:    &hearth    "#0B162D"
-  chalk:     &chalk     "#FBF7F5"
-  beacon:    &beacon    "#4BF0FC"
+named: &named # base tones
+  hearth: &hearth "#141924"
+  chalk: &chalk "#FBF7F5"
+  chalk-dim: &chalk-dim "#E5DCD8"
+  beacon: &beacon "#89BABE"
 
   # main colours
-  ash:       &ash       "#A09998"
-  coal:      &coal      "#0E1D39"
-  alight:    &alight    "#C2FD12"
-  flare:     &flare     "#F74C3F"
-  kindling:  &kindling  "#E87042"
+  ash: &ash "#9E9B9A"
+  coal: &coal "#0E1D39"
+  alight: &alight "#ABCE41"
+  flare: &flare "#F6663C"
+  kindling: &kindling "#EB9970"
   verdigris: &verdigris "#47EB8E"
-  foxfire:   &foxfire   "#2E8B57"
-  spark:     &spark     "#F3FFFB"
-  smolder:   &smolder   "#DB9A2F"
-  pilot:     &pilot     "#3F53AB"
-  dusk:      &dusk      "#3E279B"
-  fuel:      &fuel      "#0C5678"
-  ember-dark:  &ember-dark  "#992929"
+  foxfire: &foxfire "#2E8B57"
+  spark: &spark "#F6FCFA"
+  smolder: &smolder "#B0936D"
+  pilot: &pilot "#5D668D"
+  pilot-tint: &pilot-tint "#7E86AA"
+  dusk: &dusk "#8E7FC7"
+  fuel: &fuel "#2A4B5A"
+  fuel-tint: &fuel-tint "#5191AD"
+  ember-dark: &ember-dark "#992929"
   ember-light: &ember-light "#F9A851"
 
   # For legibility and flexibility
-  cinder:     &cinder     "#0E0E18"
-  bunsen:     &bunsen     "#985DE9"
-  amethyst:   &amethyst   "#BB6FE2"
-  phosphor:   &phosphor   "#67413C"
-  smoke:      &smoke      "#222425"
-  blaze:      &blaze      "#F3453F"
-  witchlight: &witchlight "#FFFC99"
+  cinder: &cinder "#0E0E18"
+  bunsen: &bunsen "#7284BB"
+  amethyst: &amethyst "#B18FC2"
+  phosphor: &phosphor "#67413C"
+  smoke: &smoke "#222425"
+  blaze: &blaze "#C27370"
+  witchlight: &witchlight "#E3E2B5"
+
+contrast:
+  hard:
+    surface:
+      base: "#101319"
+      raised: "#1A1F29"
+  medium:
+    surface:
+      base: "#161A22"
+      raised: "#202631"
+  soft:
+    surface:
+      base: "#1C212B"
+      raised: "#262D3A"
 
 palette:
   name: ember
-  background: *hearth
-  foreground: *chalk
-  selection:  *fuel
-  cursor:     *verdigris
-  bold:       *chalk
+  foreground: *chalk-dim
+  selection: *fuel
+  cursor: *verdigris
+  bold: *chalk
 
 ansi:
-  black:          *coal
-  red:            *blaze
-  green:          *verdigris
-  yellow:         *kindling
-  blue:           *pilot
-  magenta:        *amethyst
-  cyan:           *fuel
-  white:          *spark
-  bright_black:   *ash
-  bright_red:     *flare
-  bright_green:   *verdigris
-  bright_yellow:  *alight
-  bright_blue:    *dusk
+  black: *coal
+  red: *blaze
+  green: *foxfire
+  yellow: *kindling
+  blue: *pilot
+  magenta: *amethyst
+  cyan: *fuel-tint
+  white: *spark
+  bright_black: *ash
+  bright_red: *flare
+  bright_green: *verdigris
+  bright_yellow: *alight
+  bright_blue: *dusk
   bright_magenta: *bunsen
-  bright_cyan:    *beacon
-  bright_white:   *chalk
+  bright_cyan: *beacon
+  bright_white: *chalk
 
 font:
   family: JetBrains Mono
@@ -68,13 +83,13 @@ window:
   background_blur: 0.40
 
 semantic:
-  error:    *flare
-  warning:  *alight
-  success:  *verdigris
-  accent:   *alight
-  muted:    *ash
-  link:     *pilot
-  tag:      *bunsen
-  keyword:  *amethyst
-  type:     *fuel
-  comment:  *ash
+  error: *flare
+  warning: *alight
+  success: *verdigris
+  accent: *alight
+  muted: *ash
+  link: *pilot-tint
+  tag: *bunsen
+  keyword: *amethyst
+  type: *beacon
+  comment: *ash
