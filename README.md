@@ -1,7 +1,7 @@
 # ember
 
 ![alight](https://img.shields.io/static/v1?label=alight&message=in%20progress&color=C2FD12&style=flat-square)
-![wildfire](https://img.shields.io/static/v1?label=wildfire&message=early%20days&color=F3453F&style=flat-square)
+![wildfire](https://img.shields.io/static/v1?label=wildfire&message=beta&color=F3453F&style=flat-square)
 
 Small, practical developer tools with design and UX in mind.
 
@@ -38,6 +38,8 @@ Some of these are further along than others. A couple are barely more than a nam
 | ember-kindling | practice git, branch by branch                      | concept            |
 | ember-smolder  | Linked Data Event Streams (LDES) client             | pre-alpha          |
 | ember-wildfire | plain-markdown notes; ideas that spread and link    | active development |
+
+Not in the table on purpose: `ember-nvim`. It's not one of the "one tool, one job" tools — it's my own daily-driver Neovim config (LSP, completion, Treesitter, git, the PyCharm-ergonomics-in-a-terminal kind of thing). It lives in this repo because it's the biggest real consumer of `alight`'s colours, themed straight from `schemes/alight.yml`. See [ember-nvim/README.md](ember-nvim/README.md).
 
 ## ember colour palette
 
