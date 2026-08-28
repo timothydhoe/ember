@@ -1,4 +1,7 @@
 """
+validate_identity
+~~~~~~~~~~~~~~~~~
+
 Check that every colour name referenced in identity.yml actually exists in schemes/alight.yml's named palette
 
 Usage:
@@ -11,6 +14,7 @@ output:
 from __future__ import annotations
 
 from pathlib import Path
+
 import yaml
 
 BASE_DIR = Path(__file__).parent.parent
