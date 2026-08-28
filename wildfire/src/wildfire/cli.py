@@ -43,7 +43,7 @@ def _render_banner(text: str, colors: dict[str, str]) -> str:
         if i == 0 and stripped and wildfire_accent:
             r, g, b = _hex_to_rgb(wildfire_accent)
             out.append(f"\x1b[1m\x1b[38;2;{r};{g};{b}m{line}\x1b[0m")
-        elif stripped and stripped.isupper() and stripped.isalpha and accent:
+        elif stripped and stripped.isupper() and stripped.isalpha() and accent:
             r, g, b = _hex_to_rgb(accent)
             out.append(f"\x1b[1m\x1b[38;2;{r};{g};{b}m{line}\x1b[0m")
         else:

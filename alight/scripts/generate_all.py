@@ -11,15 +11,14 @@ from __future__ import annotations
 
 import export_alacritty
 import export_ghostty
-import export_identity
 import export_iterm2
 import export_nvim
 import export_preview
 import export_readme_swatch
 import export_terminal_app
 import export_tmux
-import export_vhs_theme
 import export_vim
+import install_identity
 import validate_identity
 from _ansi import bold, cyan, green, red
 
@@ -43,8 +42,7 @@ def main() -> bool:
         ("tmux", export_tmux),
         ("vim", export_vim),
         ("nvim", export_nvim),
-        ("vhs_theme", export_vhs_theme),
-        ("identity", export_identity),
+        ("iinstall_dentity", install_identity),
         ("readme_swatch", export_readme_swatch),
     ]:
         section(name)
