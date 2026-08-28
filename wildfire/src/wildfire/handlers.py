@@ -160,6 +160,9 @@ USAGE
   wildfire <text>                quick-add a wisp
   wildfire -                     read a wisp from stdin
 
+TODAY
+  --today                        show today's wisps
+
 SPARKS
   --note <title>                 create or open a spark by title
   --show <name>                  print a spark's contents
@@ -244,6 +247,16 @@ def _handle_show(rest: list[str], corpus: Corpus) -> RunResult:
     return RunResult(note.read())
 
 
+def _handle_today(rest: list[str], corpus: Corpus) -> RunResult:
+    log = corpus.today()
+    if not log.entries:
+        return RunResult("No wisps yet today.")
+    lines = ["TODAY", ""]
+    for entry in log.entries:
+        lines.append(f" {entry.time}  {entry.text}")
+    return RunResult("\n".join(lines))
+
+
 def _handle_quick_add(args: list[str], corpus: Corpus) -> RunResult:
     text = " ".join(args)
     try:
@@ -292,6 +305,7 @@ HANDLERS: dict[str, Callable[[list[str], Corpus], RunResult]] = {
     "--open": _handle_open,
     "--search": _handle_search,
     "--show": _handle_show,
+    "--today": _handle_today,
 }
 
 

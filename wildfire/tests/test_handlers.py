@@ -1,3 +1,5 @@
+from datetime import date
+
 from wildfire.handlers import RunResult, run, run_stdin
 
 
@@ -278,6 +280,30 @@ def test_note_already_exists_role_is_none(corpus):
 
 def test_list_role_is_none(corpus):
     assert run(["--list"], corpus).role is None
+
+
+def test_today_with_no_wisps(corpus):
+    result = run(["--today"], corpus)
+    assert "no wisps yet today" in result.text.lower()
+
+
+def test_today_lists_wisps_in_capture_order(corpus):
+    corpus.append_entry("first thing")
+    corpus.append_entry("second thing")
+    result = run(["--today"], corpus)
+    assert result.text.index("first thing") < result.text.index("second thing")
+
+
+def test_today_does_not_include_other_days(corpus):
+    corpus.append_entry("yesterday's thing", log_date=date(2020, 1, 1))
+    corpus.append_entry("today's thing")
+    result = run(["--today"], corpus)
+    assert "today's thing" in result.text
+    assert "yesterday's thing" not in result.text
+
+
+def test_today_role_is_none(corpus):
+    assert run(["--today"], corpus).role is None
 
 
 def test_no_args_role_is_none(corpus):
