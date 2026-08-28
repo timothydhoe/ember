@@ -253,6 +253,31 @@ def _handle_quick_add(args: list[str], corpus: Corpus) -> RunResult:
     return RunResult(f" ∘ {entry.time} {entry.text}", role="success")
 
 
+def run_stdin(lines: list[str], corpus: Corpus) -> RunResult:
+    """One wisp per non-blank line — for piped, multi-line stdin capture.
+
+    `wildfire -` used to read only the first line (`sys.stdin.readline()`);
+    a pasted batch of URLs would silently drop everything after the first.
+    This reads the whole stream instead, catching one wisp per line, and
+    skips lines that don't produce a wisp rather than aborting the batch.
+    """
+    created: list[Entry] = []
+    for line in lines:
+        text = line.strip()
+        if not text:
+            continue
+        try:
+            created.append(corpus.append_entry(text))
+        except ValueError:
+            continue
+    if not created:
+        return RunResult("Your mind can't be blank, right?", role="error")
+    if len(created) == 1:
+        entry = created[0]
+        return RunResult(f" ∘ {entry.time} {entry.text}", role="success")
+    return RunResult(_format_lists(entries=created), role="success")
+
+
 HANDLERS: dict[str, Callable[[list[str], Corpus], RunResult]] = {
     "--backlinks": _handle_backlinks,
     "--catch": _handle_catch,

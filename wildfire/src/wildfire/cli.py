@@ -11,7 +11,7 @@ import sys
 from . import identity
 from .config import Config
 from .corpus import Corpus
-from .handlers import RunResult, run
+from .handlers import RunResult, run, run_stdin
 
 
 def _hex_to_rgb(hexval: str) -> tuple[int, int, int]:
@@ -57,6 +57,7 @@ def main() -> None:
 
     args = sys.argv[1:]
     if args == ["-"]:
-        args = [sys.stdin.readline().strip()]
-    result = run(args, corpus)
+        result = run_stdin(sys.stdin.read().splitlines(), corpus)
+    else:
+        result = run(args, corpus)
     print(_render(result))

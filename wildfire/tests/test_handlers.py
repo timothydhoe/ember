@@ -1,6 +1,4 @@
-import sys
-
-from wildfire.handlers import RunResult, run
+from wildfire.handlers import RunResult, run, run_stdin
 
 
 def test_run_with_no_args_returns_prompt(corpus):
@@ -51,25 +49,37 @@ def test_run_plain_text_starting_with_flag_word_is_not_a_command(corpus):
 
 
 # ~~ stdin tests ~~
+# `wildfire -` used to read a single line (sys.stdin.readline()); a pasted
+# batch would silently drop everything after the first line. run_stdin
+# reads the whole stream, one wisp per non-blank line.
 
 
-def test_run_stdin_mode_reads_one_line(monkeypatch, corpus):
-    import io
-
-    monkeypatch.setattr(
-        "sys.stdin", io.StringIO("I prefer to use JetBrains [[Mono]] in the terminal\n")
-    )
-    text = sys.stdin.readline().strip()
-    result = run([text], corpus)
+def test_run_stdin_single_line_creates_one_wisp(corpus):
+    result = run_stdin(["I prefer to use JetBrains [[Mono]] in the terminal"], corpus)
     assert "Mono" in result.text
+    assert len(corpus.today().entries) == 1
 
 
-def test_run_stdin_mode_strips_trailing_newline(monkeypatch):
-    import io
+def test_run_stdin_multiple_lines_creates_one_wisp_per_line(corpus):
+    result = run_stdin(
+        ["https://one.example/a", "https://two.example/b", "https://three.example/c"],
+        corpus,
+    )
+    assert len(corpus.today().entries) == 3
+    assert "one.example" in result.text
+    assert "three.example" in result.text
 
-    monkeypatch.setattr("sys.stdin", io.StringIO("no trailing content issues\n"))
-    text = sys.stdin.readline().strip()
-    assert not text.endswith("\n")
+
+def test_run_stdin_skips_blank_lines(corpus):
+    result = run_stdin(["", "a real thought", "  ", ""], corpus)
+    assert len(corpus.today().entries) == 1
+    assert "a real thought" in result.text
+
+
+def test_run_stdin_all_blank_returns_error(corpus):
+    result = run_stdin(["", "   ", ""], corpus)
+    assert "blank" in result.text.lower()
+    assert len(corpus.today().entries) == 0
 
 
 # *~~ parsing tests ~~*

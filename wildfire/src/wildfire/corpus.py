@@ -10,8 +10,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, datetime
-from rapidfuzz import fuzz
 from pathlib import Path
+
+from rapidfuzz import fuzz
 
 from wildfire.config import Config
 from wildfire.models import DailyLog, Entry, Note, slugify, tokenize
@@ -42,6 +43,8 @@ class SearchResults:
 
 
 class Corpus:
+    """test doc string"""
+
     def __init__(self, config: Config) -> None:
         self.config = config
         self.config.ensure_dirs()
@@ -51,6 +54,7 @@ class Corpus:
         return self.config.entries_dir / f"{log_date.isoformat()}.md"
 
     def today(self) -> DailyLog:
+        # Test comment here
         return self.load_daily(date.today())
 
     def load_daily(self, log_date: date) -> DailyLog:
