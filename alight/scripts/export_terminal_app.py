@@ -1,28 +1,28 @@
 """
-Generate alight.terminal (macOS Terminal.app profile) from schemes/alight.yml.
+export_terminal_app.py
+~~~~~~~~~~~~~~~~~~~~~~
 
 Usage:
     uv run scripts/export_terminal_app.py
 
-Then in Terminal.app: double-click the output file (or `open` it) to import
-it as a new profile, and set it as default under
+Then in Terminal.app: double-click the profile you want (or `open` it)
+to import it, and set it as default under
 Terminal > Settings > Profiles > Default.
 """
 
 from __future__ import annotations
 
-from pathlib import Path
 import plistlib
+from pathlib import Path
+
 import yaml
 
 BASE_DIR = Path(__file__).parent.parent  # scripts/ -> alight/ root
 SCHEME_FILE = BASE_DIR / "schemes" / "alight.yml"
-TEMPLATE_FILE = (
-    BASE_DIR / "terminal" / "terminal-app" / "alight.terminal"
-)  # existing file = base/skeleton
-OUTPUT_FILE = (
-    BASE_DIR / "terminal" / "terminal-app" / "alight.terminal"
-)  # overwritten in place; use git diff to review
+TEMPLATE_FILE = BASE_DIR / "terminal" / "terminal-app" / "alight.terminal"
+OUTPUT_DIR = BASE_DIR / "terminal" / "terminal-app"
+
+CONTRAST_LEVELS = ["hard", "medium", "soft"]
 
 ANSI_KEY_MAP = {
     "black": "ANSIBlackColor",
@@ -79,18 +79,17 @@ def nscolor_archive_to_hex(blob: bytes) -> str:
     return f"#{r:02X}{g:02X}{b:02X}"
 
 
-def build(yaml_data: dict, base: dict) -> dict:
+def build(yaml_data: dict, base: dict, surface: dict) -> dict:
     out = dict(base)  # shallow copy: preserves every key alight.yml doesn't own
 
     palette = yaml_data["palette"]
     ansi = yaml_data["ansi"]
     window = yaml_data.get("window", {})
     font = yaml_data.get("font", {})
+    background = surface["base"]
 
     bg_alpha = window.get("background_opacity")
-    out["BackgroundColor"] = hex_to_nscolor_archive(
-        palette["background"], alpha=bg_alpha
-    )
+    out["BackgroundColor"] = hex_to_nscolor_archive(background, alpha=bg_alpha)
     out["TextColor"] = hex_to_nscolor_archive(palette["foreground"])
     out["SelectionColor"] = hex_to_nscolor_archive(
         palette["selection"], alpha=window.get("selection_opacity")
@@ -109,31 +108,25 @@ def build(yaml_data: dict, base: dict) -> dict:
     return out
 
 
-def diff_report(old: dict, new: dict) -> list[str]:
-    return [k for k in sorted(set(old) | set(new)) if old.get(k) != new.get(k)]
-
-
-def self_verify(yaml_data: dict, written: dict) -> bool:
+def self_verify(yaml_data: dict, written: dict, surface: dict) -> bool:
     pairs = [
         ("TextColor", yaml_data["palette"]["foreground"]),
         ("SelectionColor", yaml_data["palette"]["selection"]),
         ("CursorColor", yaml_data["palette"]["cursor"]),
         ("TextBoldColor", yaml_data["palette"]["bold"]),
-        ("BackgroundColor", yaml_data["palette"]["background"]),
+        ("BackgroundColor", surface["base"]),
     ] + [
         (plist_key, yaml_data["ansi"][ansi_key])
         for ansi_key, plist_key in ANSI_KEY_MAP.items()
     ]
 
-    print("\nSelf-verification (written file -> decoded hex -> alight.yml):")
     ok = True
     for plist_key, expected_hex in pairs:
         got_hex = nscolor_archive_to_hex(written[plist_key])
         match = got_hex.upper() == expected_hex.upper()
         ok &= match
-        print(
-            f"  {plist_key:22s} expected={expected_hex:8s} got={got_hex:8s} [{'OK' if match else 'MISMATCH'}]"
-        )
+        if not match:
+            print(f"    MISMATCH {plist_key}: expected={expected_hex} got={got_hex}")
     return ok
 
 
@@ -150,23 +143,25 @@ def main() -> bool:
     with open(TEMPLATE_FILE, "rb") as f:
         base = plistlib.load(f)
 
-    new_plist = build(yaml_data, base)
-    changed = diff_report(base, new_plist)
-    print("Keys regenerated from alight.yml:")
-    for key in changed:
-        print(f"  {key}")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    ok = True
+    for level in CONTRAST_LEVELS:
+        surface = yaml_data["contrast"][level]["surface"]
+        new_plist = build(yaml_data, base, surface)
+        out_path = OUTPUT_DIR / f"alight-{level}.terminal"
 
-    with open(OUTPUT_FILE, "wb") as f:
-        plistlib.dump(new_plist, f, fmt=plistlib.FMT_XML)
-    print(f"\nWrote {OUTPUT_FILE}")
+        with open(out_path, "wb") as f:
+            plistlib.dump(new_plist, f, fmt=plistlib.FMT_XML)
+        print(f"Wrote {out_path}")
 
-    with open(OUTPUT_FILE, "rb") as f:
-        written = plistlib.load(f)
-    ok = self_verify(yaml_data, written)
+        with open(out_path, "rb") as f:
+            written = plistlib.load(f)
+        level_ok = self_verify(yaml_data, written, surface)
+        ok &= level_ok
+        print(f"  {level}: {'ALL MATCH' if level_ok else 'MISMATCHES FOUND'}")
+
     print(
-        "\nALL MATCH -- safe to import"
-        if ok
-        else "\nMISMATCHES FOUND -- do not import yet"
+        "ALL MATCH -- safe to import" if ok else "MISMATCHES FOUND -- do not import yet"
     )
     return ok
 

@@ -1,8 +1,10 @@
 # Ghostty
 
+Three files, one per contrast level — pick the one you want:
+
 ```bash
 mkdir -p ~/.config/ghostty/themes
-cp alight.conf ~/.config/ghostty/themes/alight
+cp alight-medium.conf ~/.config/ghostty/themes/alight  # or alight-hard.conf / alight-soft.conf
 echo 'theme = alight' >> ~/.config/ghostty/config
 ```
 
