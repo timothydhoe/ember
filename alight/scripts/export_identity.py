@@ -3,7 +3,7 @@ alight.export_identity
 ~~~~~~~~~~~~~~~~~~~~~~
 Resolve schemes/alight.yml + identity.yml into a flat, self-contained projection any ember tool can read without depending on alight's own repo layout.
 
-Writes dist/identity.yml that's safe to regenerate on every run. Publishing that file so other tools actually read it is install_identity.py's job.
+Writes dist/identity.yml that's safe to regenerate on every run.
 
 usage:
     uv run scripts/export_identity.py
@@ -12,12 +12,13 @@ usage:
 from __future__ import annotations
 
 from pathlib import Path
+
 import yaml
 
 BASE_DIR = Path(__file__).parent.parent  # scripts/ -> alight/ root
 SCHEME_FILE = BASE_DIR / "schemes" / "alight.yml"
 IDENTITY_FILE = BASE_DIR / "identity.yml"
-OUTPUT_FILE = BASE_DIR / "exports" / "identity.yml"
+OUTPUT_FILE = BASE_DIR / "exports" / "identity.resolved.yml"
 
 
 def main() -> bool:
@@ -25,7 +26,7 @@ def main() -> bool:
     identity = yaml.safe_load(IDENTITY_FILE.read_text(encoding="utf-8"))
 
     named = scheme["named"]
-    semantic = scheme["semantic"]  # already resolved to hex via YAML aliases
+    semantic = scheme["semantic"]
     tools = {
         tool: named[spec["color"]] for tool, spec in identity.get("tools", {}).items()
     }
@@ -45,7 +46,6 @@ def main() -> bool:
     OUTPUT_FILE.write_text(header + body, encoding="utf-8")
     print(f"Wrote {OUTPUT_FILE}")
 
-    # self-verify against source, same pattern as the other exporters
     written = yaml.safe_load(OUTPUT_FILE.read_text(encoding="utf-8"))
     ok = (
         written.get("semantic") == semantic

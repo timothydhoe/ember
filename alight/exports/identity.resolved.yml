@@ -1,0 +1,20 @@
+# Generated from schemes/alight.yml + identity.yml -- do not edit by hand, re-run export_identity.py
+semantic:
+  error: '#F6663C'
+  warning: '#ABCE41'
+  success: '#47EB8E'
+  accent: '#ABCE41'
+  muted: '#9E9B9A'
+  link: '#7E86AA'
+  tag: '#7284BB'
+  keyword: '#B18FC2'
+  type: '#89BABE'
+  comment: '#9E9B9A'
+tools:
+  wildfire: '#C27370'
+  alight: '#ABCE41'
+brand:
+  ember:
+    gradient:
+    - '#992929'
+    - '#F9A851'
