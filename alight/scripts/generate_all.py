@@ -13,7 +13,6 @@ import export_alacritty
 import export_ghostty
 import export_iterm2
 import export_nvim
-import export_preview
 import export_readme_swatch
 import export_terminal_app
 import export_tmux
@@ -42,22 +41,18 @@ def main() -> bool:
         ("tmux", export_tmux),
         ("vim", export_vim),
         ("nvim", export_nvim),
-        ("iinstall_dentity", install_identity),
+        ("install_identity", install_identity),
         ("readme_swatch", export_readme_swatch),
     ]:
         section(name)
         results.append((name, module.main()))
         print()
 
-    section("preview (writes exports/preview.html)")
-    results.append(("preview", export_preview.main()))
-    print()
-
     section("Summary")
     ok = True
     for name, passed in results:
         tag = green("OK") if passed else red("MISMATCH")
-        print(f" {name:14s} {tag}")
+        print(f" {name:17s} {tag}")
         ok &= passed
     if not ok:
         print(
